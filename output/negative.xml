@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sentences>
+<Sentence date="20190528" id="MsTANmi9_1" sentence="True" source="NULL">
+<Text>
+叙利亚军方表示不会使用化学武器
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 叙利亚))
+      (NP (NN 军方)))
+    (VP (VV 表示)
+      (IP
+        (VP
+          (ADVP (AD 不))
+          (VP (VV 会)
+            (VP (VV 使用)
+              (NP (NN 化学) (NN 武器)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190528" id="MsTANmi9_2" sentence="True" source="NULL">
+<Text>
+中方不承认菲南海仲裁案裁决
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NN 中方))
+    (VP
+      (ADVP (AD 不))
+      (VP (VV 承认)
+        (IP
+          (NP
+            (NP (NR 菲) (NR 南海))
+            (NP (NN 仲裁案)))
+          (VP (VV 裁决)))))))
+</Parse>
+</Sentence>
+<Sentence date="20190528" id="MsTANmi9_3" sentence="True" source="NULL">
+<Text>
+德国总理默克尔16日说，她在2021年总理任期结束后不会在欧盟任职
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP
+        (NP (NR 德国))
+        (NP (NN 总理)))
+      (NP (NR 默克尔)))
+    (VP
+      (NP (NT 16日))
+      (VP (VV 说) (PU ，)
+        (IP
+          (NP (PN 她))
+          (VP
+            (PP (P 在)
+              (LCP
+                (IP
+                  (NP
+                    (NP
+                      (NP (NT 2021年))
+                      (NP (NN 总理)))
+                    (NP (NN 任期)))
+                  (VP (VV 结束)))
+                (LC 后)))
+            (ADVP (AD 不))
+            (VP (VV 会)
+              (VP
+                (PP (P 在)
+                  (NP (NR 欧盟)))
+                (VP (VV 任职))))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190528" id="MsTANmi9_4" sentence="True" source="NULL">
+<Text>
+俄总统普京认为美国对伊朗的施压政策不会取得结果
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP
+        (NP (NR 俄))
+        (NP (NN 总统)))
+      (NP (NR 普京)))
+    (VP (VV 认为)
+      (IP
+        (NP
+          (NP (NR 美国))
+          (DNP
+            (PP (P 对)
+              (NP (NR 伊朗)))
+            (DEG 的))
+          (NP (NN 施压) (NN 政策)))
+        (VP
+          (ADVP (AD 不))
+          (VP (VV 会)
+            (VP (VV 取得)
+              (NP (NN 结果)))))))))
+</Parse>
+</Sentence>
+</Sentences>

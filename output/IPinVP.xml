@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sentences>
+<Sentence date="20190527" id="jgbHtCfv_1" sentence="True" source="NULL">
+<Text>
+穆斯林正遭政府加强镇压
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 穆斯林))
+    (VP
+      (ADVP (AD 正))
+      (VP (VV 遭)
+        (IP
+          (NP (NN 政府))
+          (VP (VV 加强)
+            (NP (NN 镇压))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_2" sentence="True" source="NULL">
+<Text>
+白宫于周二表示，美国总统已对塔利班宗教派别实施制裁
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 白宫))
+    (VP
+      (PP (P 于)
+        (NP (NT 周二)))
+      (VP (VV 表示) (PU ，)
+        (IP
+          (NP
+            (NP (NR 美国))
+            (NP (NN 总统)))
+          (VP
+            (ADVP (AD 已))
+            (PP (P 对)
+              (NP
+                (NP (NR 塔利班))
+                (NP (NN 宗教) (NN 派别))))
+            (VP (VV 实施)
+              (NP (NN 制裁)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_3" sentence="True" source="NULL">
+<Text>
+贝尔格莱德电台报道，多达100名阿尔巴尼亚族人在科索沃举行示威
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 贝尔格莱德))
+      (NP (NN 电台)))
+    (VP (VV 报道) (PU ，)
+      (IP
+        (NP
+          (QP
+            (ADVP (AD 多达))
+            (QP (CD 100)
+              (CLP (M 名))))
+          (NP (NR 阿尔巴尼亚))
+          (NP (NN 族人)))
+        (VP
+          (PP (P 在)
+            (NP (NR 科索沃)))
+          (VP (VV 举行)
+            (NP (NN 示威))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_4" sentence="True" source="NULL">
+<Text>
+中国警告美国必须深刻思考对华加征关税的后果
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 中国))
+    (VP (VV 警告)
+      (NP (NR 美国))
+      (IP
+        (VP (VV 必须)
+          (VP
+            (ADVP (AD 深刻))
+            (VP (VV 思考)
+              (NP
+                (CP
+                  (IP
+                    (VP
+                      (PP (P 对)
+                        (NP (NR 华)))
+                      (VP (VV 加征)
+                        (NP (NN 关税)))))
+                  (DEC 的))
+                (NP (NN 后果))))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_5" sentence="True" source="NULL">
+<Text>
+布什政府要求中国取消对美国出口的壁垒
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 布什))
+      (NP (NN 政府)))
+    (VP (VV 要求)
+      (NP (NR 中国))
+      (IP
+        (VP (VV 取消)
+          (NP
+            (DNP
+              (NP
+                (PP (P 对)
+                  (NP (NR 美国)))
+                (NP (NN 出口)))
+              (DEG 的))
+            (NP (NN 壁垒))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_6" sentence="True" source="NULL">
+<Text>
+津巴布韦总理穆加贝指责美国敲诈勒索
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP
+        (NP (NR 津巴布韦))
+        (NP (NN 总理)))
+      (NP (NR 穆加贝)))
+    (VP (VV 指责)
+      (NP (NR 美国))
+      (IP
+        (VP (VV 敲诈勒索))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_7" sentence="True" source="NULL">
+<Text>
+波兰议会要求莫斯科承认苏联在二战期间杀害了1.5万多名波兰军官
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 波兰))
+      (NP (NN 议会)))
+    (VP (VV 要求)
+      (NP (NR 莫斯科))
+      (IP
+        (VP (VV 承认)
+          (IP
+            (NP (NR 苏联))
+            (VP
+              (PP (P 在)
+                (NP
+                  (NP (NR 二战))
+                  (NP (NN 期间))))
+              (VP (VV 杀害) (AS 了)
+                (NP (CD 1.5万)
+                  (QP (CD 多)
+                    (CLP (M 名)))
+                  (NP (NR 波兰))
+                  (NP (NN 军官)))))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_8" sentence="True" source="NULL">
+<Text>
+中方表示，欢迎卢森堡加入亚洲基础设施投资银行
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NN 中方))
+    (VP (VV 表示) (PU ，)
+      (IP
+        (VP (VV 欢迎)
+          (NP (NR 卢森堡))
+          (IP
+            (VP (VV 加入)
+              (NP
+                (NP (NR 亚洲))
+                (NP (NN 基础) (NN 设施) (NN 投资) (NN 银行))))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_9" sentence="True" source="NULL">
+<Text>
+侯赛因·萨拉米反对与美国展开谈判
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 侯赛因) (PU ·) (NR 萨拉米))
+    (VP (VV 反对)
+      (IP
+        (VP
+          (PP (P 与)
+            (NP (NR 美国)))
+          (VP (VV 展开)
+            (NP (NN 谈判))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_10" sentence="True" source="NULL">
+<Text>
+罗德里格斯宣布暂时关闭与哥伦比亚的边界
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 罗德里格斯))
+    (VP (VV 宣布)
+      (IP
+        (VP
+          (ADVP (AD 暂时))
+          (VP (VV 关闭)
+            (NP
+              (DNP
+                (PP (P 与)
+                  (NP (NR 哥伦比亚)))
+                (DEG 的))
+              (NP (NN 边界)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_11" sentence="True" source="NULL">
+<Text>
+美国总统一再试图挤压美国媒体的空间
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 美国))
+      (NP (NN 总统)))
+    (VP
+      (ADVP (AD 一再))
+      (VP (VV 试图)
+        (IP
+          (VP (VV 挤压)
+            (NP
+              (DNP
+                (NP
+                  (NP (NR 美国))
+                  (NP (NN 媒体)))
+                (DEG 的))
+              (NP (NN 空间)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_12" sentence="True" source="NULL">
+<Text>
+叙利亚军方表示不会使用化学武器
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 叙利亚))
+      (NP (NN 军方)))
+    (VP (VV 表示)
+      (IP
+        (VP
+          (ADVP (AD 不))
+          (VP (VV 会)
+            (VP (VV 使用)
+              (NP (NN 化学) (NN 武器)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20190527" id="jgbHtCfv_13" sentence="True" source="NULL">
+<Text>
+马其顿军队准备继续炮轰阿尔巴尼亚叛军控制的领土
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 马其顿))
+      (NP (NN 军队)))
+    (VP (VV 准备)
+      (IP
+        (VP (VV 继续)
+          (VP (VV 炮轰)
+            (NP
+              (CP
+                (IP
+                  (NP
+                    (NP (NR 阿尔巴尼亚))
+                    (NP (NN 叛军)))
+                  (VP (VV 控制)))
+                (DEC 的))
+              (NP (NN 领土)))))))))
+</Parse>
+</Sentence>
+</Sentences>

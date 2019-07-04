@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sentences>
+<Sentence date="20180908" id="0_1" sentence="True" source="NULL">
+<Text>
+中国近年来颁布实行了涉及经济、贸易、建设、规划、科技、文教等领域的七十一件法规性文件
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 中国))
+    (VP
+      (LCP
+        (NP (NT 近年))
+        (LC 来))
+      (VP
+        (VCD (VV 颁布) (VV 实行))
+        (AS 了)
+        (NP
+          (CP
+            (IP
+              (VP (VV 涉及)
+                (NP
+                  (NP (NN 经济) (PU 、) (NN 贸易) (PU 、) (NN 建设) (PU 、) (NN 规划) (PU 、) (NN 科技) (PU 、) (NN 文教) (ETC 等))
+                  (NP (NN 领域)))))
+            (DEG 的))
+          (QP (CD 七十一)
+            (CLP (M 件)))
+          (ADJP (JJ 法规性))
+          (NP (NN 文件)))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="1_1" sentence="True" source="NULL">
+<Text>
+中国旨在为联合国主导的叙利亚和平进程寻求政治支持，并为缓解叙利亚人道主义灾难募集善款
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 中国))
+    (VP
+      (VP (VV 旨在)
+        (NP
+          (CP
+            (IP
+              (VP
+                (PP (P 为)
+                  (NP (NR 联合国)))
+                (VP (VV 主导))))
+            (DEC 的))
+          (NP (NR 叙利亚))
+          (NP (NN 和平) (NN 进程))))
+      (VP (VV 寻求)
+        (NP (NN 政治) (NN 支持)))
+      (PU ，)
+      (CC 并)
+      (VP
+        (PP (P 为)
+          (IP
+            (VP (VV 缓解)
+              (NP
+                (NP (NR 叙利亚))
+                (NP (NN 人道) (NN 主义) (NN 灾难))))))
+        (VP (VV 募集)
+          (NP (NN 善款)))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="2_1" sentence="True" source="NULL">
+<Text>
+中国抵达苏瓦港，对斐济进行为期8天的友好访问并提供人道主义医疗服务
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 中国))
+    (VP
+      (VP (VV 抵达)
+        (NP (NR 苏瓦港)))
+      (PU ，)
+      (VP
+        (PP (P 对)
+          (NP (NR 斐济)))
+        (VP
+          (VP (VV 进行)
+            (NP
+              (CP
+                (IP
+                  (VP (VV 为期)
+                    (QP (CD 8)
+                      (CLP (M 天)))))
+                (DEC 的))
+              (ADJP (JJ 友好))
+              (NP (NN 访问))))
+          (AD 并)
+          (VP (VV 提供)
+            (NP (NN 人道) (NN 主义) (NN 医疗) (NN 服务))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="3_1" sentence="True" source="NULL">
+<Text>
+过去一年来，美国政府不断放出各种受害者论调，将自己打造成一位冤屈满腹、怒气冲冲的受害者
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (LCP
+      (QP
+        (NP (NT 过去))
+        (QP (CD 一)
+          (CLP (M 年))))
+      (LC 来))
+    (PU ，)
+    (NP
+      (NP (NR 美国))
+      (NP (NN 政府)))
+    (VP
+      (VP
+        (ADVP (AD 不断))
+        (VP (VV 放出)
+          (NP
+            (DP (DT 各)
+              (CLP (M 种)))
+            (NP (NN 受害者) (NN 论调)))))
+      (PU ，)
+      (VP (BA 将)
+        (IP
+          (NP (PN 自己))
+          (VP
+            (VRD (VV 打造) (VV 成))
+            (NP
+              (QP (CD 一)
+                (CLP (M 位)))
+              (NP (NN 冤屈))
+              (ADJP (JJ 满腹))
+              (PU 、)
+              (DNP
+                (ADJP (JJ 怒气冲冲))
+                (DEG 的))
+              (NP (NN 受害者)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="4_1" sentence="True" source="NULL">
+<Text>
+过去一年里，在伊拉克的美国驻军增加到了4万人
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (LCP
+        (QP
+          (NP (NT 过去))
+          (QP (CD 一)
+            (CLP (M 年))))
+        (LC 里))
+      (PU ，)
+      (DNP
+        (PP (P 在)
+          (NP (NR 伊拉克)))
+        (DEG 的))
+      (NP (NR 美国))
+      (NP (NN 驻军)))
+    (VP
+      (VRD (VV 增加) (VV 到))
+      (AS 了)
+      (NP
+        (QP (CD 4万))
+        (NP (NN 人))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="5_1" sentence="True" source="NULL">
+<Text>
+英国坚信自己应该留在欧盟
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 英国))
+    (VP (VV 坚信)
+      (IP
+        (NP (PN 自己))
+        (VP (VV 应该)
+          (VP (VV 留在)
+            (NP (NR 欧盟))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="7_1" sentence="True" source="NULL">
+<Text>
+中方不承认菲南海仲裁案裁决
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NN 中方))
+    (VP
+      (ADVP (AD 不))
+      (VP (VV 承认)
+        (IP
+          (NP
+            (NP (NR 菲) (NR 南海))
+            (NP (NN 仲裁案)))
+          (VP (VV 裁决)))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="8_1" sentence="True" source="NULL">
+<Text>
+德国总理默克尔16日说，她在2021年总理任期结束后不会在欧盟任职
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP
+        (NP (NR 德国))
+        (NP (NN 总理)))
+      (NP (NR 默克尔)))
+    (VP
+      (NP (NT 16日))
+      (VP (VV 说) (PU ，)
+        (IP
+          (NP (PN 她))
+          (VP
+            (PP (P 在)
+              (LCP
+                (IP
+                  (NP
+                    (NP
+                      (NP (NT 2021年))
+                      (NP (NN 总理)))
+                    (NP (NN 任期)))
+                  (VP (VV 结束)))
+                (LC 后)))
+            (ADVP (AD 不))
+            (VP (VV 会)
+              (VP
+                (PP (P 在)
+                  (NP (NR 欧盟)))
+                (VP (VV 任职))))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="9_1" sentence="True" source="NULL">
+<Text>
+俄总统普京认为美国对伊朗的施压政策不会取得结果
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP
+        (NP (NR 俄))
+        (NP (NN 总统)))
+      (NP (NR 普京)))
+    (VP (VV 认为)
+      (IP
+        (NP
+          (NP (NR 美国))
+          (DNP
+            (PP (P 对)
+              (NP (NR 伊朗)))
+            (DEG 的))
+          (NP (NN 施压) (NN 政策)))
+        (VP
+          (ADVP (AD 不))
+          (VP (VV 会)
+            (VP (VV 取得)
+              (NP (NN 结果)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="10_1" sentence="True" source="NULL">
+<Text>
+穆斯林正遭政府加强镇压
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 穆斯林))
+    (VP
+      (ADVP (AD 正))
+      (VP (VV 遭)
+        (IP
+          (NP (NN 政府))
+          (VP (VV 加强)
+            (NP (NN 镇压))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="11_1" sentence="True" source="NULL">
+<Text>
+白宫于周二表示，美国总统已对塔利班宗教派别实施制裁
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 白宫))
+    (VP
+      (PP (P 于)
+        (NP (NT 周二)))
+      (VP (VV 表示) (PU ，)
+        (IP
+          (NP
+            (NP (NR 美国))
+            (NP (NN 总统)))
+          (VP
+            (ADVP (AD 已))
+            (PP (P 对)
+              (NP
+                (NP (NR 塔利班))
+                (NP (NN 宗教) (NN 派别))))
+            (VP (VV 实施)
+              (NP (NN 制裁)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="12_1" sentence="True" source="NULL">
+<Text>
+贝尔格莱德电台报道，多达100名阿尔巴尼亚族人在科索沃举行示威
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 贝尔格莱德))
+      (NP (NN 电台)))
+    (VP (VV 报道) (PU ，)
+      (IP
+        (NP
+          (QP
+            (ADVP (AD 多达))
+            (QP (CD 100)
+              (CLP (M 名))))
+          (NP (NR 阿尔巴尼亚))
+          (NP (NN 族人)))
+        (VP
+          (PP (P 在)
+            (NP (NR 科索沃)))
+          (VP (VV 举行)
+            (NP (NN 示威))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="13_1" sentence="True" source="NULL">
+<Text>
+中国警告美国必须深刻思考对华加征关税的后果
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 中国))
+    (VP (VV 警告)
+      (NP (NR 美国))
+      (IP
+        (VP (VV 必须)
+          (VP
+            (ADVP (AD 深刻))
+            (VP (VV 思考)
+              (NP
+                (CP
+                  (IP
+                    (VP
+                      (PP (P 对)
+                        (NP (NR 华)))
+                      (VP (VV 加征)
+                        (NP (NN 关税)))))
+                  (DEC 的))
+                (NP (NN 后果))))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="14_1" sentence="True" source="NULL">
+<Text>
+布什政府要求中国取消对美国出口的壁垒
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 布什))
+      (NP (NN 政府)))
+    (VP (VV 要求)
+      (NP (NR 中国))
+      (IP
+        (VP (VV 取消)
+          (NP
+            (DNP
+              (NP
+                (PP (P 对)
+                  (NP (NR 美国)))
+                (NP (NN 出口)))
+              (DEG 的))
+            (NP (NN 壁垒))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="15_1" sentence="True" source="NULL">
+<Text>
+津巴布韦总理穆加贝指责美国敲诈勒索
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP
+        (NP (NR 津巴布韦))
+        (NP (NN 总理)))
+      (NP (NR 穆加贝)))
+    (VP (VV 指责)
+      (NP (NR 美国))
+      (IP
+        (VP (VV 敲诈勒索))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="16_1" sentence="True" source="NULL">
+<Text>
+波兰议会要求莫斯科承认苏联在二战期间杀害了1.5万多名波兰军官
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 波兰))
+      (NP (NN 议会)))
+    (VP (VV 要求)
+      (NP (NR 莫斯科))
+      (IP
+        (VP (VV 承认)
+          (IP
+            (NP (NR 苏联))
+            (VP
+              (PP (P 在)
+                (NP
+                  (NP (NR 二战))
+                  (NP (NN 期间))))
+              (VP (VV 杀害) (AS 了)
+                (NP (CD 1.5万)
+                  (QP (CD 多)
+                    (CLP (M 名)))
+                  (NP (NR 波兰))
+                  (NP (NN 军官)))))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="17_1" sentence="True" source="NULL">
+<Text>
+中方表示，欢迎卢森堡加入亚洲基础设施投资银行
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NN 中方))
+    (VP (VV 表示) (PU ，)
+      (IP
+        (VP (VV 欢迎)
+          (NP (NR 卢森堡))
+          (IP
+            (VP (VV 加入)
+              (NP
+                (NP (NR 亚洲))
+                (NP (NN 基础) (NN 设施) (NN 投资) (NN 银行))))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="18_1" sentence="True" source="NULL">
+<Text>
+侯赛因·萨拉米反对与美国展开谈判
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 侯赛因) (PU ·) (NR 萨拉米))
+    (VP (VV 反对)
+      (IP
+        (VP
+          (PP (P 与)
+            (NP (NR 美国)))
+          (VP (VV 展开)
+            (NP (NN 谈判))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="19_1" sentence="True" source="NULL">
+<Text>
+罗德里格斯宣布暂时关闭与哥伦比亚的边界
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 罗德里格斯))
+    (VP (VV 宣布)
+      (IP
+        (VP
+          (ADVP (AD 暂时))
+          (VP (VV 关闭)
+            (NP
+              (DNP
+                (PP (P 与)
+                  (NP (NR 哥伦比亚)))
+                (DEG 的))
+              (NP (NN 边界)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="20_1" sentence="True" source="NULL">
+<Text>
+美国总统一再试图挤压独立媒体的空间
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 美国))
+      (NP (NN 总统)))
+    (VP
+      (ADVP (AD 一再))
+      (VP (VV 试图)
+        (IP
+          (VP (VV 挤压)
+            (NP
+              (CP
+                (IP
+                  (VP (AD 独立)
+                    (NP (NN 媒体))))
+                (DEG 的))
+              (NP (NN 空间)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="21_1" sentence="True" source="NULL">
+<Text>
+叙利亚军方表示不会使用化学武器
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 叙利亚))
+      (NP (NN 军方)))
+    (VP (VV 表示)
+      (IP
+        (VP
+          (ADVP (AD 不))
+          (VP (VV 会)
+            (VP (VV 使用)
+              (NP (NN 化学) (NN 武器)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="22_1" sentence="True" source="NULL">
+<Text>
+马其顿军队准备继续炮轰阿尔巴尼亚叛军控制的领土
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 马其顿))
+      (NP (NN 军队)))
+    (VP (VV 准备)
+      (IP
+        (VP (VV 继续)
+          (VP (VV 炮轰)
+            (NP
+              (CP
+                (IP
+                  (NP
+                    (NP (NR 阿尔巴尼亚))
+                    (NP (NN 叛军)))
+                  (VP (VV 控制)))
+                (DEC 的))
+              (NP (NN 领土)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="24_1" sentence="True" source="NULL">
+<Text>
+阿斯瓦德周日将被赞比亚引渡至英国
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 阿斯瓦德))
+    (VP
+      (NP (NT 周日))
+      (ADVP (AD 将))
+      (VP (SB 被)
+        (IP
+          (NP (NR 赞比亚))
+          (VP
+            (VRD (VV 引渡) (VV 至))
+            (NP (NR 英国))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="25_1" sentence="True" source="NULL">
+<Text>
+斯里兰卡境内有可能会发生更多的袭击案件，因为发动袭击的极端组织仍有成员未被逮捕
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 斯里兰卡))
+      (NP (NN 境内)))
+    (VP
+      (VP (VE 有)
+        (NP (NN 可能)))
+      (VP (VV 会)
+        (VP (VV 发生)
+          (NP
+            (DNP
+              (QP
+                (ADVP (AD 更))
+                (QP (CD 多)))
+              (DEG 的))
+            (NP (NN 袭击) (NN 案件))))))
+    (PU ，)
+    (PP (P 因为)
+      (IP
+        (NP
+          (CP
+            (IP
+              (VP (VV 发动)
+                (NP (NN 袭击))))
+            (DEC 的))
+          (ADJP (JJ 极端))
+          (NP (NN 组织)))
+        (VP
+          (ADVP (AD 仍))
+          (VP (VE 有)
+            (IP
+              (NP (NN 成员))
+              (VP
+                (ADVP (AD 未))
+                (VP (SB 被)
+                  (VP (VV 逮捕)))))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="26_1" sentence="True" source="NULL">
+<Text>
+一名美国公民因涉嫌参与上月在热那亚举行的八国集团峰会期间的骚乱，已在意大利接受调查
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (QP (CD 一)
+        (CLP (M 名)))
+      (NP (NR 美国))
+      (NP (NN 公民)))
+    (VP
+      (PP (P 因)
+        (IP
+          (VP (VV 涉嫌)
+            (NP
+              (DNP
+                (NP
+                  (CP
+                    (IP
+                      (VP (VV 参与)
+                        (NP
+                          (CP
+                            (IP
+                              (VP
+                                (NP
+                                  (DP (DT 上))
+                                  (NP (NN 月)))
+                                (PP (P 在)
+                                  (NP (NR 热那亚)))
+                                (VP (VV 举行))))
+                            (DEC 的))
+                          (NP (NR 八国) (NN 集团))
+                          (NP (NN 峰会))))))
+                  (NP (NN 期间)))
+                (DEG 的))
+              (NP (NN 骚乱))))))
+      (PU ，)
+      (VP
+        (ADVP (AD 已))
+        (PP (P 在)
+          (NP (NR 意大利)))
+        (VP (VV 接受)
+          (NP (NN 调查)))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="27_1" sentence="True" source="NULL">
+<Text>
+在埃塞俄比亚，政治犯遭受酷刑折磨
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (PP (P 在)
+      (NP (NR 埃塞俄比亚)))
+    (PU ，)
+    (NP (NN 政治犯))
+    (VP (VV 遭受)
+      (NP (NN 酷刑) (NN 折磨)))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="28_1" sentence="True" source="NULL">
+<Text>
+伊朗情报机构遭欧盟制裁，被控涉嫌“政治暗杀”
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 伊朗))
+      (NP (NN 情报) (NN 机构)))
+    (VP
+      (VP (VV 遭)
+        (NP
+          (NP (NR 欧盟))
+          (NP (NN 制裁))))
+      (PU ，)
+      (VP (SB 被)
+        (VP (VV 控)
+          (IP
+            (VP (VV 涉嫌)
+              (NP (PU “)
+                (NP (NN 政治) (NN 暗杀))
+                (PU ”)))))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="29_1" sentence="True" source="NULL">
+<Text>
+中国驻南斯拉夫大使馆被北约袭击
+</Text>
+<Parse>
+(ROOT
+  (NP
+    (NP
+      (NP (NR 中国))
+      (CP
+        (IP
+          (VP (VV 驻)
+            (NP (NR 南斯拉夫)))))
+      (NP (NN 大使馆)))
+    (VP (SB 被)
+      (NP
+        (NP (NR 北约))
+        (NP (NN 袭击))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="30_1" sentence="True" source="NULL">
+<Text>
+瑞士于今日表示，驻日内瓦的两名苏联外交官已经被驱逐了
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 瑞士))
+    (PP (P 于)
+      (NP (NT 今日)))
+    (VV 表示) (PU ，)
+    (NP
+      (CP
+        (IP
+          (VP (VV 驻)
+            (NP (NR 日内瓦))))
+        (DEC 的))
+      (QP (CD 两)
+        (CLP (M 名)))
+      (NP (NR 苏联))
+      (NP (NN 外交官)))
+    (VP
+      (ADVP (AD 已经))
+      (VP (SB 被)
+        (VP (VV 驱逐) (AS 了))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="31_1" sentence="True" source="NULL">
+<Text>
+中国驻南斯拉夫大使馆被袭击
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 中国))
+      (CP
+        (IP
+          (VP (VV 驻)
+            (NP (NR 南斯拉夫)))))
+      (NP (NN 大使馆)))
+    (VP (SB 被)
+      (VP (VV 袭击)))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="32_1" sentence="True" source="NULL">
+<Text>
+印度被英国所统治
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP (NR 印度))
+    (VP (LB 被)
+      (IP
+        (NP (NR 英国))
+        (VP (MSP 所)
+          (VP (VV 统治)))))))
+</Parse>
+</Sentence>
+<Sentence date="20180908" id="33_1" sentence="True" source="NULL">
+<Text>
+朝鲜战争由美国所发起
+</Text>
+<Parse>
+(ROOT
+  (IP
+    (NP
+      (NP (NR 朝鲜))
+      (NP (NN 战争)))
+    (VP
+      (PP (P 由)
+        (NP (NR 美国)))
+      (VP (MSP 所)
+        (VP (VV 发起))))))
+</Parse>
+</Sentence>
+</Sentences>
