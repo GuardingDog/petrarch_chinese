@@ -26,7 +26,7 @@ def wait_process(port):
             return False
 
     except:
-        print "端口未被使用"
+        print ("端口未被使用")
         return False
 
 def kill_process(port):
@@ -38,9 +38,9 @@ def kill_process(port):
     try:
         process_pid = list(ret_list[0].split())[-1]
         os.popen('taskkill /pid ' + str(process_pid) + ' /F')
-        print "端口已被释放"
+        print ("端口已被释放")
     except:
-        print "端口未被使用"
+        print ("端口未被使用")
 
 
 

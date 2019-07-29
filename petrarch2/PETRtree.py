@@ -267,12 +267,12 @@ class Phrase:
                 return (self.head, self.head_phrase)
             elif self.label == 'ADVP':
                 return self.children[0].text, self
-            if (not self.label[1] == 'P'):
+            if (not self.label[1] == 'P' and not self.label in ['VCD','VRD']):
                 return (self.text, self.parent)
-
+            # TODO 增加vcd vrd判斷 ok
             head_children = filter(
                 lambda child: child.label.startswith(
-                    self.label[0]) and not child.label[1] == 'P',
+                    self.label[0]) and not child.label[1] == 'P' and not child.label in ['VCD','VRD'],# TODO: child.label[1] == 'V'?
                 self.children)
             if head_children:
                 possibilities = filter(
@@ -285,11 +285,11 @@ class Phrase:
                 possibilities = filter(
                     None, map(
                         lambda a: a.get_head(), other_children))
-
-            self.head_phrase = possibilities[-1][1]
+            flag = 0 if self.label[0]=='V' else -1
+            self.head_phrase = possibilities[flag][1]
             # return the last, English usually compounds words to the front
-            self.head = possibilities[-1][0]
-            return possibilities[-1]
+            self.head = possibilities[flag][0]
+            return possibilities[flag]
 
         except:
             return (None, None)
@@ -751,7 +751,6 @@ class VerbPhrase(Phrase):
         # the vp or its parents
         self.upper = ""
         self.lower = ""      # contains the meaning of the subtree c-commanded by the verb
-        self.passive = False
         self.code = 0
         self.valid = self.is_valid()
         self.S = None
@@ -851,7 +850,7 @@ class VerbPhrase(Phrase):
         self.get_meaning = self.return_meaning
 
         print('line 816: call VP.get_code()')
-        c, passive, meta = self.get_code()
+        c, meta = self.get_code()
         print("34444444444444444444444444")
         print(c)
         # print('VP-gm-0:',self.get_text())
@@ -902,11 +901,7 @@ class VerbPhrase(Phrase):
             if not isinstance(event, tuple):
                 second = event
                 third = c
-                if passive:
-                    for item in first:
-                        e2 = ([second], item, passive)
-                        self.sentence.metadata[id(e2)] = [event, meta, 7]
-                        returns.append(e2)
+
             elif event[1] == 'passive':
                 first = event[0]
                 third = utilities.combine_code(c, event[2])
@@ -932,7 +927,7 @@ class VerbPhrase(Phrase):
         events = []
         up = self.get_upper()
         print('line 877: get_upper()', json.dumps(up, ensure_ascii=False, encoding='utf-8'))
-        if self.check_passive() or (passive and not c):
+        if self.check_passive():
             print("passive:",self.check_passive())
             print("code",c)
             print("45555555555555555555555555")
@@ -979,15 +974,16 @@ class VerbPhrase(Phrase):
                     e = (
                         source_options,
                         i,
-                        c if self.check_passive() else passive)
+                        c if self.check_passive() else '')#Todo: else?
                     events.append(e)
                     self.sentence.metadata[id(e)] = [None, e, meta, 3]
                     self.meaning = events
                     print("event_passive:",events)
                     return events
-
+        # TODO: 删掉or passive （可以先不改） 930行已刪除
         up = "" if up in ['', [], [""], ["~"], ["~~"]] else up
-        low, neg = self.get_lower()
+        self.get_lower = self.get_lower()
+        low, neg = self.get_lower
         if not low:
             low = ""
         if neg:
@@ -1055,9 +1051,6 @@ class VerbPhrase(Phrase):
 
     def return_upper(self):
         return self.upper
-
-    def return_passive(self):
-        return self.passive
 
     def check_passive(self):
         """
@@ -1314,8 +1307,6 @@ class VerbPhrase(Phrase):
         print('VP.get_code()')
         meta = []
         dict = PETRglobals.VerbDict['verbs']
-        if 'AND' in map(lambda a: a.text, self.children):
-            return 0, 0, ['and']
         patterns = PETRglobals.VerbDict['phrases']
         print("self.children[0].label:",self.children[0].label)
         # if(self.children[0].label=="LB"):
@@ -1336,7 +1327,7 @@ class VerbPhrase(Phrase):
                     #verb=self.children[1].children[1].get_head()[0]
                     for item in self.children[1].children:
                         if(item.label=="VP"):
-                            if(item.children[0].label=="VP"):
+                            if(item.children[0].label in ["VP","VCD","VRD"]):
                                 verb = filter(lambda a: a.label == 'VV', item.children[0].children)[0].text
                             elif(item.children[0].label=="MSP"):
                                 verb=item.get_head()[0]
@@ -1366,7 +1357,6 @@ class VerbPhrase(Phrase):
         meta.append(verb)
         meaning = ""
         path = dict
-        passive = False
         # if (self.children[0].label == "SB"):
         #     passive=True
         # print("passive:",passive)
@@ -1388,7 +1378,7 @@ class VerbPhrase(Phrase):
                         self.verbclass = meaning if not meaning == "" else verb
                         if not code == '':
                             # print("s:",code)
-                            active, passive = utilities.convert_code(code)
+                            active = utilities.convert_code(code) # TODO : passive不要了 active = code 本身 相应的要改resolve events ok
                             print(active)
                             self.code = active
                             print("line 1223: verb_code: ", utilities.convert_code(active, 0))
@@ -1412,7 +1402,7 @@ class VerbPhrase(Phrase):
                         meaning = path['#']['#']['meaning']
                         self.verbclass = meaning if not meaning == "" else verb
                         if not code == '':
-                            active, passive = utilities.convert_code(code)
+                            active = utilities.convert_code(code)
                             self.code = active
                     except:
                         pass
@@ -1428,17 +1418,16 @@ class VerbPhrase(Phrase):
             print("match:",match)
             print("match_code:",match['code'])
             print(json.dumps(match, ensure_ascii=False, encoding='utf-8'))
-            active, passive = utilities.convert_code(match['code'])
+            active = utilities.convert_code(match['code'])
             print("line 1256: match: ", json.dumps(match, ensure_ascii=False, encoding='utf-8'))
             print(json.dumps(match, ensure_ascii=False, encoding='utf-8'))
-            active, passive = utilities.convert_code(match['code'])
+            active = utilities.convert_code(match['code'])
             print("code:", utilities.convert_code(active, 0))
             self.code = active
-        if passive and not active:
-            self.check_passive = lambda: True
-            self.code = passive
+            # TODO ：刪掉下面if ok
+
         print('exit VP.get_code()')
-        return self.code, passive, meta
+        return self.code, meta
 
     def match_transform(self, e):
         """
@@ -1788,7 +1777,7 @@ class Sentence:
                 lab = element[1:]
                 if lab == "NP":
                     new = NounPhrase(lab, self.date, self)
-                elif lab in ["VP", 'VCD', 'VRD']:
+                elif lab in ["VP"]:
                     new = VerbPhrase("VP", self.date, self)
                     self.verbs.append(new)
                 elif lab == "PP":
@@ -1941,7 +1930,8 @@ class Sentence:
             print("end:",events)
 
             #测试用
-            PETRwriter.write_events_demo(self, events, meta, 'evts.' + 'test.txt')
+            import globalConfigPara as gcp
+            PETRwriter.write_events_demo(self, events, meta, gcp.output_path+gcp.output_name)
 
             self.get_events = self.return_events
 #--            print('GF3',valid,'\nGF4',meta) # --
@@ -1990,3 +1980,5 @@ class Sentence:
             print(" ] ]",file = f,end=" \n")
         else:
             print(" ]", file=f, end=" ")'''
+
+

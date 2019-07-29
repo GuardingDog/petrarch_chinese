@@ -797,11 +797,9 @@ def convert_code(code, forward=1):
            "---": 0}
 
     if forward:
-        passive = False
         active = code.split(":")
-        passive = active[1] if len(active) > 1 else "---"
         active = active[0] if active[0] else "---"
-        return active, passive
+        return active
     else:
         return code
     """
