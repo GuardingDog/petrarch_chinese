@@ -1122,19 +1122,19 @@ class VerbPhrase(Phrase):
 # --          print('gS-entry')
         self.get_S = self.return_S
         not_found = True
-        level = self
-        while not_found and not level.parent is None:
-            if isinstance(level.parent, VerbPhrase):
-                level = level.parent
-            elif level.parent.label == "S":
-                if level.children[0].label == "TO" and level.index == 0:
-                    level = level.parent
-                    continue
-                self.S = level.parent
-                return level.parent
-            else:
-                return level
-        return None
+        self.S = self
+        # while not_found and not level.parent is None:
+        #     if isinstance(level.parent, VerbPhrase):
+        #         level = level.parent
+        #     elif level.parent.label == "S":
+        #         if level.children[0].label == "TO" and level.index == 0:
+        #             level = level.parent
+        #             continue
+        #         self.S = level.parent
+        #         return level.parent
+        #     else:
+        #         return level
+        return self
 
     def get_upper(self):
         """
@@ -1409,6 +1409,8 @@ class VerbPhrase(Phrase):
 
 # --          print('++1')
         print('line 1250: call VP.match_pattern()')
+        if verb=="加大":
+            pass
         match = self.match_pattern()
 # --          print('++2')
         if match:
@@ -1583,14 +1585,14 @@ class VerbPhrase(Phrase):
                 if head and head in path:
                     subpath = path[head]
                     # First check within the NP for PP's
-                    skip = lambda a: False
-                    match = reroute(
-                        subpath, skip, skip, lambda a: match_prep(
-                            a, item), skip, 0)
-                    if match:
-                        headphrase.children[-1].color = True
-                        print('line 1432: exit VP.match_noun()')
-                        return match
+                    # skip = lambda a: False
+                    # match = reroute(
+                    #     subpath, skip, skip, lambda a: match_prep(
+                    #         a, item), skip, 0)
+                    # if match:
+                    #     headphrase.children[-1].color = True
+                    #     print('line 1432: exit VP.match_noun()')
+                    #     return match
 
                     # Then check the other siblings
                     print('line 1433: call match_phrase()')
@@ -1610,28 +1612,31 @@ class VerbPhrase(Phrase):
             print('line 1449: exit VP.match_pattern().match')
             return reroute(path, lambda a: match_phrase(a, phrase.head_phrase))
 
-        def match_prep(path, phrase=self):
-            # Matches preposition
-            # --              print('mp-entry')
-            for item in filter(lambda b: isinstance(
-                    b, PrepPhrase), phrase.children):
-                prep = item.children[0].text
-                if prep in path:
-                    subpath = path[prep]
-# --                      print('mp-reroute1')
-                    match = reroute(subpath,
-                                    lambda a: match_noun(
-                                        a, item.children[1])if len(
-                                        item.children) > 1 else False,
-                                    match_prep)
-                    if match:
-                        # --                        print('mp-False')
-                        return match
-# --              print('mp-reroute2')
-            return reroute(path, o2=match_prep)
+#         def match_prep(path, phrase=self):
+#             # Matches preposition
+#             # --              print('mp-entry')
+#             for item in filter(lambda b: isinstance(
+#                     b, PrepPhrase), phrase.children):
+#                 prep = item.children[0].text
+#                 if prep in path:
+#                     subpath = path[prep]
+# # --                      print('mp-reroute1')
+#                     match = reroute(subpath,
+#                                     lambda a: match_noun(
+#                                         a, item.children[1])if len(
+#                                         item.children) > 1 else False,
+#                                     match_prep)
+#                     if match:
+#                         # --                        print('mp-False')
+#                         return match
+# # --              print('mp-reroute2')
+#             return reroute(path, o2=match_prep)
 
-        def reroute(subpath, o1=match_noun, o2=match_noun, o3=match_prep, o4=match_noun, exit=1):
+        def reroute(subpath, o1=match_noun, o2=match_noun, o3=None, o4=match_noun):
             # --                  print('rr-entry:') # ,subpath
+            if '#' in subpath and exit == 0:
+                pass
+
             if not o1:  # match_noun() can call reroute() with o1 == None; guessing returning False is the appropriate response pas 16.04.21
                 return False
             if '-' in subpath:
@@ -1646,11 +1651,11 @@ class VerbPhrase(Phrase):
                 if match:
                     return match
 
-            if '|' in subpath:
-                # --                      print('rr-|')
-                match = o3(subpath['|'])
-                if match:
-                    return match
+            # if '|' in subpath:
+            #     # --                      print('rr-|')
+            #     match = o3(subpath['|'])
+            #     if match:
+            #         return match
 
             if '*' in subpath:
                 # --                      print('rr-*')
@@ -1658,7 +1663,7 @@ class VerbPhrase(Phrase):
                 if match:
                     return match
 
-            if '#' in subpath and exit:
+            if '#' in subpath:
                 # --                      print('rr-#')
                 return subpath['#']
 
