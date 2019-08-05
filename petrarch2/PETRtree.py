@@ -923,7 +923,7 @@ class VerbPhrase(Phrase):
                         returns.append(e)
                     return returns
                 second = 'passive'
-            elif not event[0] in ['', [], [""], ["~"], ["~~"]]:
+            elif not event[0] in ['', [], [""], ["~"], ["~~"]] and not str(c).startswith(str(event[2])):
                 second = event
                 third = c
             else:
