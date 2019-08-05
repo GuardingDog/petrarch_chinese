@@ -31,6 +31,7 @@ import PETRglobals  # global variables
 import utilities
 import codecs
 import json
+import globalConfigPara as gcp
 import PETRtree
 
 
@@ -88,6 +89,8 @@ def write_events_demo(sent, events, meta, output_file):
             f.write(str(json.dumps(locations, ensure_ascii=False, encoding='utf-8')) + '\n')
         print('events:', events)
         for index, event in enumerate(events[0]):
+            if events[0][index][2] == 0 and gcp.output_zero_flag == '0':
+                continue
             f.write(str(events[0][index]) + '\n')
         # f.write(str(meta) + '\n\n')
 

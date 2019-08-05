@@ -12,6 +12,7 @@ import types
 import logging
 import json
 import PETRwriter
+import globalConfigPara as gcp
 
 # -- from inspect import getouterframes, currentframe  # -- # used to track the levels of recursion
 
@@ -158,6 +159,14 @@ class Phrase:
             text += ' ' + child.get_parse_string()
             text += ')'
         return text
+
+    def get_adv_text(self):
+         text = ''
+         if self.text:
+             text += self.text
+         for child in self.children:
+             text += child.get_adv_text() + ' '
+         return text
 
     def resolve_codes(self, codes):
         """
@@ -851,6 +860,7 @@ class VerbPhrase(Phrase):
 
         print('line 816: call VP.get_code()')
         c, meta = self.get_code()
+        c = self.parent.return_code() if isinstance(self.parent,VerbPhrase) and str(self.parent.return_code()).startswith(str(c)) else c
         print("34444444444444444444444444")
         print(c)
         # print('VP-gm-0:',self.get_text())
@@ -870,7 +880,7 @@ class VerbPhrase(Phrase):
             if isinstance(event, tuple):
                 first = event[0]
                 second = event[1]
-                third = "-" + event[2]
+                third = "-" + event[2] if len(event[2])>0 and event[2][0] != '-' else event[2][1:]
                 e2 = (first, second, third)
                 print("line 874 neg_events")
                 print(e2)
@@ -1161,6 +1171,11 @@ class VerbPhrase(Phrase):
     def return_lower(self):
         return self.lower
 
+    def get_neg_dic(self):
+        file = open(gcp.neg_dic_path)
+        neg_dic = file.read()
+        return filter(lambda x : x, neg_dic.split('\n'))
+
     def get_lower(self):
         """
         Find the meaning of the children of the VP, and whether or not there is a "not" in the VP.
@@ -1219,8 +1234,10 @@ class VerbPhrase(Phrase):
             # negated = (lower and self.children[1].text) == "NOT"
             for item in self.children:
                 if item.label == "ADVP":
-                    if "没有" in item.get_parse_string() or "不" in item.get_parse_string():
-                        negated = True
+                    advs=filter(lambda x :x, item.get_adv_text().split(' '))
+                    neg_dic=self.get_neg_dic()
+                    for adv in advs:
+                        negated = not negated if adv in neg_dic else negated
         else:
             negated = False
 
@@ -1777,8 +1794,8 @@ class Sentence:
                 lab = element[1:]
                 if lab == "NP":
                     new = NounPhrase(lab, self.date, self)
-                elif lab in ["VP"]:
-                    new = VerbPhrase("VP", self.date, self)
+                elif lab in ["VP","VCD","VRD"]:
+                    new = VerbPhrase(lab, self.date, self)
                     self.verbs.append(new)
                 elif lab == "PP":
                     new = PrepPhrase(lab, self.date, self)

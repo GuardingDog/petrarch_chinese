@@ -25,7 +25,7 @@ def parse_Config():
             return False
 
     parser = ConfigParser()
-    config_path = "./configFile.ini"
+    config_path = "configFile.ini"
     confdat = parser.read(config_path)
     if len(confdat) == 0:
         print(
@@ -50,10 +50,16 @@ def parse_Config():
         gcp.input_name = parser.get('Options', 'input_name')
         gcp.xml_output_path = parser.get('Options' , 'xml_output_path')
         gcp.xml_output_name = parser.get('Options' , 'xml_output_name')
-        gcp.output_path = parser.get('Options' , 'xml_output_path')
+        gcp.xml_file_name = parser.get('Options' , 'xml_file_name')
+        gcp.output_path = parser.get('Options' , 'output_path')
         gcp.output_name = parser.get('Options' , 'output_name')
         gcp.corenlp_path = parser.get('StanfordNLP' , 'stanford_dir')
         gcp.corenlp_parse = get_config_boolean('corenlp_parse')
+        gcp.format_text = parser.get('Options' , 'format_text')
+        gcp.neg_dic_path = parser.get('Options' , 'neg_dic_path')
+        gcp.output_zero_flag = parser.get('Options' , 'output_zero_flag')
+
+        gcp.port = int(parser.get('Options', 'port'))
 
 
 
