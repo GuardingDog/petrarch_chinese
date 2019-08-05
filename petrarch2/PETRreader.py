@@ -822,33 +822,33 @@ def read_verb_dictionary(verb_path):
 
             index += 1
 
-        preps = map(lambda a: segment[a[0]:a[1] + 1],
-                    zip(prepstarts, prepends))
-        prep_pats = []
-        for phrase in preps:
-            phrase = map(lambda a: a.replace("(", "").replace(")", ""), phrase)
-            p = phrase[0]
-            pnps = []
-            pmodifiers = []
-            if len(phrase) > 1:
-
-                head = ""
-                for element in phrase[1:]:
-                    # Find noun phrases
-                    if element.endswith("}"):
-                        nounphrase = 0
-                        head = element[:-1]
-                        pnps.append((head, pmodifiers))
-                        pmodifiers = []
-                    elif nounphrase:
-                        pmodifiers.append(element)
-                    elif element.startswith("{"):
-                        pmodifiers.append(element[1:])
-                        nounphrase = 1
-                    else:
-                        pnps.append(element)
-            prep_pats.append((p, pnps))
-        return nps, prep_pats
+        # preps = map(lambda a: segment[a[0]:a[1] + 1],
+        #             zip(prepstarts, prepends))
+        # prep_pats = []
+        # for phrase in preps:
+        #     phrase = map(lambda a: a.replace("(", "").replace(")", ""), phrase)
+        #     p = phrase[0]
+        #     pnps = []
+        #     pmodifiers = []
+        #     if len(phrase) > 1:
+		#
+        #         head = ""
+        #         for element in phrase[1:]:
+        #             # Find noun phrases
+        #             if element.endswith("}"):
+        #                 nounphrase = 0
+        #                 head = element[:-1]
+        #                 pnps.append((head, pmodifiers))
+        #                 pmodifiers = []
+        #             elif nounphrase:
+        #                 pmodifiers.append(element)
+        #             elif element.startswith("{"):
+        #                 pmodifiers.append(element[1:])
+        #                 nounphrase = 1
+        #             else:
+        #                 pnps.append(element)
+        #     prep_pats.append((p, pnps))
+        return nps, []
 
 
     for line in file:
@@ -900,27 +900,28 @@ def read_verb_dictionary(verb_path):
                                 pre[0]) else path
                             count += 1
 
-                    if pre[1]: #pre-verb prepositional phrase
-                        path = path.setdefault("|", {})
-                        for phrase in pre[1]:
-                            head = phrase[0]
-                            path = path.setdefault(head, {})
-                            count = 1
-                            for noun in phrase[1]:
-                                if not isinstance(noun, tuple):
-                                    path = path.setdefault("-", {})
-                                    path = path.setdefault(noun, {})
-                                else:
-
-                                    head = noun[0]
-                                    path = path.setdefault(head, {})
-                                    for element in noun[1]:
-                                        path = path.setdefault("-", {})
-                                        path = path.setdefault(element, {})
-                                path = path.setdefault(
-                                    ",", {}) if not count == len(
-                                    phrase[1]) else path
-                                count += 1
+                    # 中文字典没有介词
+                    # if pre[1]: #pre-verb prepositional phrase
+                    #     path = path.setdefault("|", {})
+                    #     for phrase in pre[1]:
+                    #         head = phrase[0]
+                    #         path = path.setdefault(head, {})
+                    #         count = 1
+                    #         for noun in phrase[1]:
+                    #             if not isinstance(noun, tuple):
+                    #                 path = path.setdefault("-", {})
+                    #                 path = path.setdefault(noun, {})
+                    #             else:
+					#
+                    #                 head = noun[0]
+                    #                 path = path.setdefault(head, {})
+                    #                 for element in noun[1]:
+                    #                     path = path.setdefault("-", {})
+                    #                     path = path.setdefault(element, {})
+                    #             path = path.setdefault(
+                    #                 ",", {}) if not count == len(
+                    #                 phrase[1]) else path
+                    #             count += 1
 
                 if not post == ([], []):
                     path = path.setdefault('*', {})
@@ -941,25 +942,26 @@ def read_verb_dictionary(verb_path):
                             path = path.setdefault(",", {}) if not count == len(post[0]) else path
                             count += 1
 
-                    if post[1]: #post-verb prepositional phrase
-                        for phrase in post[1]:
-                            head = phrase[0]
-                            path = path.setdefault("|", {})
-                            path = path.setdefault(head, {})
-                            count = 1
-                            for noun in phrase[1]:
-                                if not isinstance(noun, tuple):
-                                    path = path.setdefault("-", {})
-                                    path = path.setdefault(noun, {})
-                                else:
-                                    head = noun[0]
-                                    path = path.setdefault("-", {})
-                                    path = path.setdefault(head, {})
-                                    for element in noun[1]:
-                                        path = path.setdefault("-", {})
-                                        path = path.setdefault(element, {})
-                                path = path.setdefault(",", {}) if not count == len(phrase[1]) else path
-                                count += 1
+                    # 嘻嘻中文没有介词
+                    # if post[1]: #post-verb prepositional phrase
+                    #     for phrase in post[1]:
+                    #         head = phrase[0]
+                    #         path = path.setdefault("|", {})
+                    #         path = path.setdefault(head, {})
+                    #         count = 1
+                    #         for noun in phrase[1]:
+                    #             if not isinstance(noun, tuple):
+                    #                 path = path.setdefault("-", {})
+                    #                 path = path.setdefault(noun, {})
+                    #             else:
+                    #                 head = noun[0]
+                    #                 path = path.setdefault("-", {})
+                    #                 path = path.setdefault(head, {})
+                    #                 for element in noun[1]:
+                    #                     path = path.setdefault("-", {})
+                    #                     path = path.setdefault(element, {})
+                    #             path = path.setdefault(",", {}) if not count == len(phrase[1]) else path
+                    #             count += 1
 
                 path["#"] = {'code': code[1:-1], 'line': line[:-1]}
         elif syn and line.startswith("&"): #read SYNONYM SETS block information
@@ -1022,26 +1024,27 @@ def read_verb_dictionary(verb_path):
 
             if words[-1].startswith("["):
                 code = words.pop()
-            '''
-            if not (len(words) > 1 or '{' in word):
 
-                if stem.endswith("S") or stem.endswith("X") or stem.endswith("Z"):
-                    words.append(stem + "ES")
-                elif stem.endswith("Y"):
-                    words.append(stem[:-1] + "IES")
-                else:
-                    words.append(stem + "S")
+            # 反正中文没有单数复数这些乱七八糟的东西，想删就删
+            # if not (len(words) > 1 or '{' in word):
+			#
+            #     if stem.endswith("S") or stem.endswith("X") or stem.endswith("Z"):
+            #         words.append(stem + "ES")
+            #     elif stem.endswith("Y"):
+            #         words.append(stem[:-1] + "IES")
+            #     else:
+            #         words.append(stem + "S")
+			#
+            #     if stem.endswith("E"):
+            #         words.append(stem + "D")
+            #     else:
+            #         words.append(stem + "ED")
+			#
+            #     if stem.endswith("E") and not stem[-2] in "AEIOU":
+            #         words.append(stem[:-1] + "ING")
+            #     else:
+            #         words.append(stem + "ING")
 
-                if stem.endswith("E"):
-                    words.append(stem + "D")
-                else:
-                    words.append(stem + "ED")
-
-                if stem.endswith("E") and not stem[-2] in "AEIOU":
-                    words.append(stem[:-1] + "ING")
-                else:
-                    words.append(stem + "ING")
-            '''
             for w in words:
                 wstem = w
                 if "_" in w:
