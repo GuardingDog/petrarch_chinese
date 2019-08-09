@@ -161,35 +161,42 @@ def write_events(event_dict, output_file):
                 event_str = '\t'.join(event)
             # print(event_str)
             if joined_issues:
-                event_str += '\t{}'.format(joined_issues)
+                event_str += '\n\tjoined_issues\t{}\n'.format(joined_issues)
             else:
-                event_str += '\t'
+                event_str += '\n\tjoined_issues\tnull\n'
 
             if url:
-                event_str += '\t{}\t{}\t{}'.format(ids, url, StorySource)
+                event_str += '\tids\t{}\n\turl\t{}\n\tStorySource\t{}\n'.format(ids, url, StorySource)
             else:
-                event_str += '\t{}\t{}'.format(ids, StorySource)
+                event_str += '\tids\t{}\n\tStorySource\t{}\n'.format(ids, StorySource)
 
             if PETRglobals.WriteActorText:
                 if 'actortext' in filtered_events[event]:
-                    event_str += '\t{}\t{}'.format(
+                    event_str += '\tactortext\t{}\t{}\n'.format(
                         filtered_events[event]['actortext'][0],
                         filtered_events[event]['actortext'][1])
                 else:
-                    event_str += '\t---\t---'
+                    event_str += '\tactortext\t---\t---\n'
             if PETRglobals.WriteEventText:
                 if 'eventtext' in filtered_events[event]:
-                    event_str += '\t{}'.format(
+                    event_str += '\teventtext\t{}\n'.format(
                         filtered_events[event]['eventtext'])
                 else:
-                    event_str += '\t---'
+                    event_str += '\teventtext\t---\n'
+            # if True:
             if PETRglobals.WriteActorRoot:
                 if 'actorroot' in filtered_events[event]:
-                    event_str += '\t{}\t{}'.format(
+                    event_str += '\tactorroot\t{}\t{}\n'.format(
                         filtered_events[event]['actorroot'][0],
                         filtered_events[event]['actorroot'][1])
                 else:
-                    event_str += '\t---\t---'
+                    event_str += '\tactorroot\t---\t---\n'
+            if PETRglobals.WriteEventRoot:
+                if 'eventroot' in filtered_events[event]:
+                    event_str += '\teventroot\t{}\n'.format(
+                        filtered_events[event]['eventroot'])
+                else:
+                    event_str += '\teventroot\t---\n'
 
             story_output.append(event_str)
 
