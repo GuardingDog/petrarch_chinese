@@ -120,7 +120,7 @@ if __name__ == "__main__":
     print(111)
 
     args = Namespace(command_name='batch', config=None, inputs=xml_output_path + xml_file_name + '.xml',
-                     nullactors=False, nullverbs=False, outputs=xml_output_path + xml_file_name + '_result.txt')
+                     nullactors=False, nullverbs=False, outputs=output_path + output_filename )
     # args = Namespace(command_name='batch', config=None, inputs='petrarch2/test-ch2.xml', nullactors=False, nullverbs=False, outputs=xml_output_path + 'test-ch2' + '_result.txt')
     petrarch2_main(args)
 

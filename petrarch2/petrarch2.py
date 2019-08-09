@@ -258,74 +258,74 @@ def do_coding(event_dict):
                 #print("meta:",meta)
                 # exit()
 
-#                 code_time = time.time() - t1
-#                 if PETRglobals.NullVerbs or PETRglobals.NullActors:
-#                     event_dict[key]['meta'] = meta
-#                     event_dict[key]['text'] = sentence.txt
-#                 elif PETRglobals.NullActors:
-#                     event_dict[key]['events'] = coded_events
-#                     coded_events = None   # skips additional processing
-#                     event_dict[key]['text'] = sentence.txt
-#                 else:
-#                     # 16.04.30 pas: we're using the key value 'meta' at two
-#                     # very different
-#                     event_dict[key]['meta']['verbs'] = meta
-#                     # levels of event_dict -- see the code about ten lines below -- and
-#                     # this is potentially confusing, so it probably would be useful to
-#                     # change one of those
-#
-#                 del(sentence)
-#                 times += code_time
-#                 sents += 1
-#                 # print('\t\t',code_time)
-#
-#                 if coded_events:
-#                     event_dict[key]['sents'][sent]['events'] = coded_events
-#                     event_dict[key]['sents'][sent]['meta'] = meta
-#                     #print('DC-events:', coded_events) # --
-#                     #print('DC-meta:', meta) # --
-#                     #print('+++',event_dict[key]['sents'][sent])  # --
-#                     if PETRglobals.WriteActorText or PETRglobals.WriteEventText or PETRglobals.WriteActorRoot:
-#                         text_dict = utilities.extract_phrases(event_dict[key]['sents'][sent], SentenceID)
-#                         print('DC-td1:',text_dict) # --
-#                         if text_dict:
-#                             event_dict[key]['sents'][sent][
-#                                 'meta']['actortext'] = {}
-#                             event_dict[key]['sents'][sent][
-#                                 'meta']['eventtext'] = {}
-#                             event_dict[key]['sents'][sent][
-#                                 'meta']['actorroot'] = {}
-# # --                            print('DC1:',text_dict) # --
-#                             for evt in coded_events:
-#                                 if evt in text_dict:  # 16.04.30 pas bypasses problems with expansion of compounds
-#                                     event_dict[key]['sents'][sent]['meta'][
-#                                         'actortext'][evt] = text_dict[evt][:2]
-#                                     event_dict[key]['sents'][sent]['meta'][
-#                                         'eventtext'][evt] = text_dict[evt][2]
-#                                     event_dict[key]['sents'][sent]['meta'][
-#                                         'actorroot'][evt] = text_dict[evt][3:5]
-#
-#                 if coded_events and PETRglobals.IssueFileName != "":
-#                     event_issues = get_issues(SentenceText)
-#                     if event_issues:
-#                         event_dict[key]['sents'][sent]['issues'] = event_issues
-#
-#                 if PETRglobals.PauseBySentence:
-#                     if len(input("Press Enter to continue...")) > 0:
-#                         sys.exit()
-#
-#                 prev_code = coded_events
-#                 # NEvents += len(coded_events)
-#                 if len(coded_events) == 0:
-#                     NEmpty += 1
-#             else:
-#                 logger.info('{} has no parse information. Passing.'.format(SentenceID))
-#                 pass
-#
-#         if SkipStory:
-#             event_dict[key]['sents'] = None
-#
-#     print("\nSummary:")
+                code_time = time.time() - t1
+                if PETRglobals.NullVerbs or PETRglobals.NullActors:
+                    event_dict[key]['meta'] = meta
+                    event_dict[key]['text'] = sentence.txt
+                elif PETRglobals.NullActors:
+                    event_dict[key]['events'] = coded_events
+                    coded_events = None   # skips additional processing
+                    event_dict[key]['text'] = sentence.txt
+                else:
+                    # 16.04.30 pas: we're using the key value 'meta' at two
+                    # very different
+                    event_dict[key]['meta']['verbs'] = meta
+                    # levels of event_dict -- see the code about ten lines below -- and
+                    # this is potentially confusing, so it probably would be useful to
+                    # change one of those
+
+                del(sentence)
+                times += code_time
+                sents += 1
+                # print('\t\t',code_time)
+
+                if coded_events:
+                    event_dict[key]['sents'][sent]['events'] = coded_events
+                    event_dict[key]['sents'][sent]['meta'] = meta
+                    #print('DC-events:', coded_events) # --
+                    #print('DC-meta:', meta) # --
+                    #print('+++',event_dict[key]['sents'][sent])  # --
+                    if PETRglobals.WriteActorText or PETRglobals.WriteEventText or PETRglobals.WriteActorRoot:
+                        text_dict = utilities.extract_phrases(event_dict[key]['sents'][sent], SentenceID)
+                        print('DC-td1:',text_dict) # --
+                        if text_dict:
+                            event_dict[key]['sents'][sent][
+                                'meta']['actortext'] = {}
+                            event_dict[key]['sents'][sent][
+                                'meta']['eventtext'] = {}
+                            event_dict[key]['sents'][sent][
+                                'meta']['actorroot'] = {}
+# --                            print('DC1:',text_dict) # --
+                            for evt in coded_events:
+                                if evt in text_dict:  # 16.04.30 pas bypasses problems with expansion of compounds
+                                    event_dict[key]['sents'][sent]['meta'][
+                                        'actortext'][evt] = text_dict[evt][:2]
+                                    event_dict[key]['sents'][sent]['meta'][
+                                        'eventtext'][evt] = text_dict[evt][2]
+                                    event_dict[key]['sents'][sent]['meta'][
+                                        'actorroot'][evt] = text_dict[evt][3:5]
+
+                if coded_events and PETRglobals.IssueFileName != "":
+                    event_issues = get_issues(SentenceText)
+                    if event_issues:
+                        event_dict[key]['sents'][sent]['issues'] = event_issues
+
+                if PETRglobals.PauseBySentence:
+                    if len(input("Press Enter to continue...")) > 0:
+                        sys.exit()
+
+                prev_code = coded_events
+                # NEvents += len(coded_events)
+                if len(coded_events) == 0:
+                    NEmpty += 1
+            else:
+                logger.info('{} has no parse information. Passing.'.format(SentenceID))
+                pass
+
+        if SkipStory:
+            event_dict[key]['sents'] = None
+
+    print("\nSummary:")
 
     """
     print(
@@ -531,15 +531,15 @@ def run(filepaths, out_file, s_parsed):
 
     updated_events = do_coding(events)
     print("update_event:")
-    print(json.dumps(updated_events, ensure_ascii=False, encoding='utf-8'))
-    """
-    # if PETRglobals.NullVerbs:
-    #     PETRwriter.write_nullverbs(updated_events, 'nullverbs.' + out_file)
-    # elif PETRglobals.NullActors:
-    #     PETRwriter.write_nullactors(updated_events, 'nullactors.' + out_file)
-    # else:
-    #     PETRwriter.write_events(updated_events, 'evts.' + out_file)
-    """
+#    print(json.dumps(updated_events, ensure_ascii=False, encoding='utf-8'))
+    import globalConfigPara as gcp
+    if PETRglobals.NullVerbs:
+        PETRwriter.write_nullverbs(updated_events, 'nullverbs.' + out_file)
+    elif PETRglobals.NullActors:
+        PETRwriter.write_nullactors(updated_events, 'nullactors.' + out_file)
+    else:
+        PETRwriter.write_events(updated_events, out_file)
+
 
 
 def run_pipeline(data, out_file=None, config=None, write_output=True,

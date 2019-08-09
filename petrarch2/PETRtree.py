@@ -1953,7 +1953,7 @@ class Sentence:
 
             #测试用
             import globalConfigPara as gcp
-            PETRwriter.write_events_demo(self, events, meta, gcp.output_path+gcp.output_name)
+            PETRwriter.write_events_demo(self, events, meta, './evtss.txt')
 
             self.get_events = self.return_events
 #--            print('GF3',valid,'\nGF4',meta) # --
