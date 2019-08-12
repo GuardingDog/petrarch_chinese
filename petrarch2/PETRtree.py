@@ -860,7 +860,6 @@ class VerbPhrase(Phrase):
 
         print('line 816: call VP.get_code()')
         c, meta = self.get_code()
-        c = self.parent.return_code() if isinstance(self.parent,VerbPhrase) and str(self.parent.return_code()).startswith(str(c)) else c
         print("34444444444444444444444444")
         print(c)
         # print('VP-gm-0:',self.get_text())
@@ -885,6 +884,15 @@ class VerbPhrase(Phrase):
                 print("line 874 neg_events")
                 print(e2)
                 return e2
+
+        def complete_events(events, prepIndex):
+
+            new_events=[]
+            for index, i in enumerate(events):
+                if index == prepIndex:
+                    continue
+                new_events.append(i if index<prepIndex or not (i[2].startswith(events[prepIndex][2]) and len(i[1]) == 0) else (i[0], events[0][1], i[2]))
+            return new_events
 
         def resolve_events(event):
             """
@@ -923,7 +931,7 @@ class VerbPhrase(Phrase):
                         returns.append(e)
                     return returns
                 second = 'passive'
-            elif not event[0] in ['', [], [""], ["~"], ["~~"]] and not str(c).startswith(str(event[2])):
+            elif not event[0] in ['', [], [""], ["~"], ["~~"]]: #原本为了防止 VCD解析成VP时的target为一个事件(也就是这里的event)导致的重复问题而加 现VCD已经不是VP 故删去and not str(c).startswith(str(event[2])):
                 second = event
                 third = c
             else:
@@ -996,13 +1004,17 @@ class VerbPhrase(Phrase):
         low, neg = self.get_lower
         if not low:
             low = ""
-        if neg:
+        '''
+        if neg and c:
             c = c * (-1)
             print("2333333333333333333333333333333")
             print(c)
             print(low)
-
+        跟下面的neg_events功能重复 且整个样例只有一个进到这里 unicode*-1 变成''没了 改为下面的形式e = (up, low, c if not neg else u'-'+c)
+        '''
         if isinstance(low, list):
+            prepIndex_low=[i for i,x in enumerate(low) if not isinstance(x, tuple)]
+            prepIndex = [i for i, x in enumerate(self.children) if x.label=='PP']
             for event in low:
                 print(event)
                 if(neg):
@@ -1010,9 +1022,11 @@ class VerbPhrase(Phrase):
                 events += resolve_events(event)
                 print("line 984 events")
                 print(events)
+            if len(prepIndex)>0 and len(prepIndex_low)>0 and self.children[prepIndex[0]].children[0].text in self.get_prep_dic():
+                events = complete_events(events, prepIndex_low[0])
         elif not s_options:
             if up or c:
-                e = (up, low, c)
+                e = (up, low, c if not neg else u'-'+c)
                 self.sentence.metadata[id(e)] = [None, e, 4]
                 events.append(e)
             elif low:
@@ -1174,7 +1188,21 @@ class VerbPhrase(Phrase):
     def get_neg_dic(self):
         file = open(gcp.neg_dic_path)
         neg_dic = file.read()
-        return filter(lambda x : x, neg_dic.split('\n'))
+        return filter(lambda x: x, neg_dic.split('\n'))
+
+    def get_prep_dic(self):
+        result_dic={}
+        file = open(gcp.prep_dic_path)
+        prep_dic = file.read()
+        preps = filter(lambda x: x, prep_dic.split('\n\n'))
+        for i in preps:
+            prep_list = filter(lambda x:x, i.split('\n'))
+            prep_type = prep_list[0].strip('#').strip(' ')
+            result_dic[prep_type] = []
+            for j in prep_list[1:]:
+                result_dic[prep_type].append(j)
+        print(result_dic.items())
+        return result_dic[u'\u5bf9\u8c61\u7c7b']
 
     def get_lower(self):
         """
@@ -1205,7 +1233,7 @@ class VerbPhrase(Phrase):
         lower = []
         v_options = filter(
             lambda a: (
-                isinstance(a, VerbPhrase) and a.is_valid())
+                isinstance(a, VerbPhrase) or (isinstance(a, PrepPhrase) and a.children[0].text in self.get_prep_dic()))
                 # isinstance(a, VerbPhrase) and False)
                 , self.children)
 
@@ -1799,7 +1827,7 @@ class Sentence:
                 lab = element[1:]
                 if lab == "NP":
                     new = NounPhrase(lab, self.date, self)
-                elif lab in ["VP","VCD","VRD"]:
+                elif lab in ["VP"]:
                     new = VerbPhrase(lab, self.date, self)
                     self.verbs.append(new)
                 elif lab == "PP":

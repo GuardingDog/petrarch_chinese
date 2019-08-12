@@ -13,5 +13,6 @@ corenlp_parse = True
 
 format_text = ""
 neg_dic_path = ""
+prep_dic_path = ""
 port = -1
 output_zero_flag = 0

@@ -57,6 +57,7 @@ def parse_Config():
         gcp.corenlp_parse = get_config_boolean('corenlp_parse')
         gcp.format_text = parser.get('Options' , 'format_text')
         gcp.neg_dic_path = parser.get('Options' , 'neg_dic_path')
+        gcp.prep_dic_path = parser.get('Options', 'prep_dic_path')
         gcp.output_zero_flag = parser.get('Options' , 'output_zero_flag')
 
         gcp.port = int(parser.get('Options', 'port'))
