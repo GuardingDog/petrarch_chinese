@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # If you are using python2, the first two lines are needed.
     reload(sys)
     sys.setdefaultencoding('utf-8')
-    env = 1
+    env = 0
     print(os.getcwd())
     reader.parse_Config()
     input_path = input_name = xml_output_path = output_path = output_filename = xml_file_name = format_text = corenlp_path = ""
@@ -86,7 +86,7 @@ if __name__ == "__main__":
         format_text = gcp.format_text
     if not gcp.corenlp_path == "":
         corenlp_path = gcp.corenlp_path
-    if not gcp.port == -1:#自选端口
+    if not gcp.port == -1:# 自选端口情况
         port = gcp.port
         kill_process(port)
         while (wait_process(port)):
@@ -110,7 +110,7 @@ if __name__ == "__main__":
         with open(output_filename, 'w') as fw:
             fw.write('')
 
-    flag = False
+    flag = True
     if flag:
         converter = FromCorenlpConverter(input_path + format_text + '.txt', '', corenlp_path, port)
 

@@ -316,7 +316,7 @@ def do_coding(event_dict):
 
                 prev_code = coded_events
                 # NEvents += len(coded_events)
-                if len(coded_events) == 0:
+                if coded_events is not None and len(coded_events) == 0:
                     NEmpty += 1
             else:
                 logger.info('{} has no parse information. Passing.'.format(SentenceID))

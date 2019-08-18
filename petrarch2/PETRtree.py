@@ -887,11 +887,16 @@ class VerbPhrase(Phrase):
 
         def complete_events(events, prepIndex):
 
-            new_events=[]
+            new_events = []
             for index, i in enumerate(events):
-                if index == prepIndex:
+                if index in prepIndex:
                     continue
-                new_events.append(i if index<prepIndex or not (i[2].startswith(events[prepIndex][2]) and len(i[1]) == 0) else (i[0], events[0][1], i[2]))
+                for low_index in prepIndex:
+                    if index < min(prepIndex) or not (i[2].startswith(events[low_index][2]) and len(i[1]) == 0):
+                        if i not in new_events:
+                            new_events.append(i)
+                    else:
+                        new_events.append((i[0], events[low_index][1], i[2]))
             return new_events
 
         def resolve_events(event):
@@ -1023,10 +1028,10 @@ class VerbPhrase(Phrase):
                 print("line 984 events")
                 print(events)
             if len(prepIndex)>0 and len(prepIndex_low)>0 and self.children[prepIndex[0]].children[0].text in self.get_prep_dic():
-                events = complete_events(events, prepIndex_low[0])
+                events = complete_events(events, prepIndex_low)
         elif not s_options:
             if up or c:
-                e = (up, low, c if not neg else u'-'+c)
+                e = (up, low, c if not neg else u'-'+str(c))
                 self.sentence.metadata[id(e)] = [None, e, 4]
                 events.append(e)
             elif low:
@@ -1176,7 +1181,7 @@ class VerbPhrase(Phrase):
         self.get_upper = self.return_upper
         for child in self.parent.children:
             if isinstance(child, NounPhrase) and not child.get_meaning() == [
-                    "~"]:
+                    "~"] and child.get_meaning() != []:
                 self.upper = child.get_meaning()
 
                 return self.upper
@@ -1256,16 +1261,18 @@ class VerbPhrase(Phrase):
         # for item in lower:
         #     print(item)
         events = []
+        neg_dic = self.get_neg_dic()
 
         negated = False
         if len(self.children) > 1:
             # negated = (lower and self.children[1].text) == "NOT"
             for item in self.children:
                 if item.label == "ADVP":
-                    advs=filter(lambda x :x, item.get_adv_text().split(' '))
-                    neg_dic=self.get_neg_dic()
+                    advs = filter(lambda x: x, item.get_adv_text().split(' '))
                     for adv in advs:
                         negated = not negated if adv in neg_dic else negated
+                elif item.label == "VE" and item.text == "没有":
+                    negated = True
         else:
             negated = False
 
