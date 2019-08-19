@@ -1207,7 +1207,7 @@ class VerbPhrase(Phrase):
             for j in prep_list[1:]:
                 result_dic[prep_type].append(j)
         print(result_dic.items())
-        return result_dic[u'\u5bf9\u8c61\u7c7b']
+        return result_dic[u'对象类']
 
     def get_lower(self):
         """
