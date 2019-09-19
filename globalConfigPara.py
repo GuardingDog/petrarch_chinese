@@ -9,7 +9,7 @@ output_path = ""
 output_name = ""
 
 corenlp_path = ""
-corenlp_parse = True
+corenlp_parse = False
 
 format_text = ""
 neg_dic_path = ""

@@ -23,7 +23,8 @@ class PetrXmlConverter:
     def __init__(self, input_path, output_path=''):
         self.input_path = input_path
         if output_path == '':
-            self.output_path = gcp.xml_output_path + input_path.split('/')[-1].split('.')[0] + '.xml'
+            self.output_path = gcp.xml_output_path + gcp.xml_file_name + '.xml'
+            #self.output_path = gcp.xml_output_path + input_path.split('/')[-1].split('.')[0] + '.xml'
         else:
             self.output_path = output_path
         self.events = []

@@ -84,6 +84,8 @@ if __name__ == "__main__":
         xml_file_name = gcp.xml_file_name
     if not gcp.format_text == "":
         format_text = gcp.format_text
+    if not gcp.corenlp_parse == "":
+        flag = gcp.corenlp_parse
     if not gcp.corenlp_path == "":
         corenlp_path = gcp.corenlp_path
     if not gcp.port == -1:# 自选端口情况
@@ -110,14 +112,13 @@ if __name__ == "__main__":
         with open(output_filename, 'w') as fw:
             fw.write('')
 
-    flag = True
+    #flag = True
     if flag:
         converter = FromCorenlpConverter(input_path + format_text + '.txt', '', corenlp_path, port)
 
         converter.run()
 
         converter.__del__()
-    print(111)
 
     args = Namespace(command_name='batch', config=None, inputs=xml_output_path + xml_file_name + '.xml',
                      nullactors=False, nullverbs=False, outputs=output_path + output_filename )

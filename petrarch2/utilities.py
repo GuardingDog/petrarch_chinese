@@ -306,7 +306,6 @@ def story_filter(story_dict, story_id):
 		for verbs in verb_list:
 			for verb in verbs:
 				if verb in PETRglobals.VerbDict['verbs']:
-					print("hahahahahahahahahhahahah\n", PETRglobals.VerbDict['verbs'][verb])
 					result.append(PETRglobals.VerbDict['verbs'][verb]['#']['#']['meaning'])
 
 		result = list(set(result))

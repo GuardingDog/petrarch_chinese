@@ -110,8 +110,7 @@ class Phrase:
                 self.meaning = events
                 return events
 
-        print(("IP"))
-        print(self.meaning)
+
         return self.meaning
 
     def get_text(self):
@@ -465,7 +464,6 @@ class NounPhrase(Phrase):
         return code
 
     def get_meaning(self):
-        print('NP.get_meaning()')
         def recurse(path, words, length, so_far=""):
 
             # --            print('NPgm-rec-lev:',len(getouterframes(currentframe(1))))  # --
@@ -598,13 +596,13 @@ class NounPhrase(Phrase):
                     level = level.parent
         # check whether there are codes in the noun Phrase
         index = 0
-        print("line 560: text_children:", json.dumps(text_children, ensure_ascii=False, encoding='utf-8'))
+        #print("line 560: text_children:", json.dumps(text_children, ensure_ascii=False, encoding='utf-8'))
         while index < len(text_children):
             match = recurse(
                 PETRglobals.ActorDict, text_children[
                     index:], 0)  # checking for actors
             if match:
-                print('line 565: NPgm-m-1:', json.dumps(match, ensure_ascii=False, encoding='utf-8'))
+         #       print('line 565: NPgm-m-1:', json.dumps(match, ensure_ascii=False, encoding='utf-8'))
                 codes += match[0]
                 roots += match[3]
                 index += match[2]
@@ -671,7 +669,7 @@ class NounPhrase(Phrase):
             self.sentence.metadata[
                 'nouns'] += [(matched_txt, self.meaning, roots[:len(matched_txt)])]
 #        self.sentence.print_nouns('NPgm-5:') # --
-        print('exit NP.get_meaning()')
+        #print('exit NP.get_meaning()')
         return self.meaning
 
     def convert_existential(self):
@@ -854,14 +852,11 @@ class VerbPhrase(Phrase):
                 List of events coded by the subtree rooted in this phrase.
 
         """
-        print('VP.get_meaning()')
+        #print('VP.get_meaning()')
         time1 = time.time()
         self.get_meaning = self.return_meaning
 
-        print('line 816: call VP.get_code()')
         c, meta = self.get_code()
-        print("34444444444444444444444444")
-        print(c)
         # print('VP-gm-0:',self.get_text())
         # print('VP-gm-1:',c, meta)
         if c:
@@ -874,15 +869,13 @@ class VerbPhrase(Phrase):
         def neg_events(event):
             returns = []
             first, second, third = ["", "", ""]
-            print("line 866 neg_events")
-            print(event)
             if isinstance(event, tuple):
                 first = event[0]
                 second = event[1]
                 third = "-" + event[2] if len(event[2])>0 and event[2][0] != '-' else event[2][1:]
                 e2 = (first, second, third)
-                print("line 874 neg_events")
-                print(e2)
+                #print("line 874 neg_events")
+                #print(e2)
                 return e2
 
         def complete_events(events, prepIndex):
@@ -915,8 +908,7 @@ class VerbPhrase(Phrase):
             returns: [tuple]
                      list of resolved event tuples
             """
-            print('VP.resolve_events()')
-            print('event:', event)
+
             returns = []
             first, second, third = [up, "", ""]
             if not (up or c):
@@ -944,16 +936,12 @@ class VerbPhrase(Phrase):
                 third = utilities.combine_code(c, event[2])
             e = (first, second, third)
             self.sentence.metadata[id(e)] = [event, c, meta, 2]
-            print('line 875: returns: ', returns + [e])
             return returns + [e]
 
         events = []
         up = self.get_upper()
-        print('line 877: get_upper()', json.dumps(up, ensure_ascii=False, encoding='utf-8'))
+        #print('line 877: get_upper()', json.dumps(up, ensure_ascii=False, encoding='utf-8'))
         if self.check_passive():
-            print("passive:",self.check_passive())
-            print("code",c)
-            print("45555555555555555555555555")
             # Check for source in preps
             source_options = []
             target_options = up
@@ -1001,7 +989,7 @@ class VerbPhrase(Phrase):
                     events.append(e)
                     self.sentence.metadata[id(e)] = [None, e, meta, 3]
                     self.meaning = events
-                    print("event_passive:",events)
+                   # print("event_passive:",events)
                     return events
         # TODO: 删掉or passive （可以先不改） 930行已刪除
         up = "" if up in ['', [], [""], ["~"], ["~~"]] else up
@@ -1021,12 +1009,12 @@ class VerbPhrase(Phrase):
             prepIndex_low=[i for i,x in enumerate(low) if not isinstance(x, tuple)]
             prepIndex = [i for i, x in enumerate(self.children) if x.label=='PP']
             for event in low:
-                print(event)
+                #print(event)
                 if(neg):
                     event = neg_events(event)
                 events += resolve_events(event)
-                print("line 984 events")
-                print(events)
+               # print("line 984 events")
+                #print(events)
             if len(prepIndex)>0 and len(prepIndex_low)>0 and self.children[prepIndex[0]].children[0].text in self.get_prep_dic():
                 events = complete_events(events, prepIndex_low)
         elif not s_options:
@@ -1074,8 +1062,8 @@ class VerbPhrase(Phrase):
             else:
                 maps += evs
         self.meaning = maps
-        print("line 960: maps: ", json.dumps(maps, ensure_ascii=False, encoding='utf-8'))
-        print('exit VP.get_meaning()')
+        #print("line 960: maps: ", json.dumps(maps, ensure_ascii=False, encoding='utf-8'))
+        #print('exit VP.get_meaning()')
         return maps
 
     def return_upper(self):
@@ -1097,7 +1085,7 @@ class VerbPhrase(Phrase):
                       Whether or not it is passive
         """
 # --          print('cp-entry')
-        print("self.children[0] in check_passive:",self.children[0].label)
+       # print("self.children[0] in check_passive:",self.children[0].label)
         if(self.children[0].label=="SB"or self.children[0].label=="LB"):
             return True
         elif(self.children[0].label=="PP"):
@@ -1356,11 +1344,11 @@ class VerbPhrase(Phrase):
         """
 
 #        self.get_code = self.return_code
-        print('VP.get_code()')
+#         print('VP.get_code()')
         meta = []
         dict = PETRglobals.VerbDict['verbs']
         patterns = PETRglobals.VerbDict['phrases']
-        print("self.children[0].label:",self.children[0].label)
+        # print("self.children[0].label:",self.children[0].label)
         # if(self.children[0].label=="LB"):
         #     print("IP in VP",self.children[1].children[1].get_head()[0])
             # verb=self.children[1].children[1].get_head()[0]
@@ -1386,7 +1374,7 @@ class VerbPhrase(Phrase):
                             else:
                                 verb=filter(lambda a: a.label == 'VV', item.children)[0].text
                 except Exception as e:
-                    print('line 1293: exception:', e)
+                    # print('line 1293: exception:', e)
                     verb = self.get_head()[0]
             else:
                 try:
@@ -1412,14 +1400,14 @@ class VerbPhrase(Phrase):
         # if (self.children[0].label == "SB"):
         #     passive=True
         # print("passive:",passive)
-        print("line 1296: verb: ", json.dumps(verb, ensure_ascii=False, encoding='utf-8'))
+        # print("line 1296: verb: ", json.dumps(verb, ensure_ascii=False, encoding='utf-8'))
 
         if verb in dict:
             code = 0
             # print("verb:", verb)
             path = dict[verb]
-            print("path:", json.dumps(path, ensure_ascii=False, encoding='utf-8'))
-            print('line 1210: path:', json.dumps(path, ensure_ascii=False, encoding='utf-8'))
+            # print("path:", json.dumps(path, ensure_ascii=False, encoding='utf-8'))
+            # print('line 1210: path:', json.dumps(path, ensure_ascii=False, encoding='utf-8'))
             if ['#'] == path.keys():
                 #print("123:",path.keys())
                 path = path['#']
@@ -1431,9 +1419,9 @@ class VerbPhrase(Phrase):
                         if not code == '':
                             # print("s:",code)
                             active = utilities.convert_code(code) # TODO : passive不要了 active = code 本身 相应的要改resolve events ok
-                            print(active)
+                            # print(active)
                             self.code = active
-                            print("line 1223: verb_code: ", utilities.convert_code(active, 0))
+                            # print("line 1223: verb_code: ", utilities.convert_code(active, 0))
                     except:
                         self.code = (0, 0, [])
             else:
@@ -1460,9 +1448,7 @@ class VerbPhrase(Phrase):
                         pass
 
 # --          print('++1')
-        print('line 1250: call VP.match_pattern()')
-        if verb=="加大":
-            pass
+
         match = self.match_pattern()
 # --          print('++2')
         if match:
@@ -1480,7 +1466,7 @@ class VerbPhrase(Phrase):
             self.code = active
             # TODO ：刪掉下面if ok
 
-        print('exit VP.get_code()')
+        # print('exit VP.get_code()')
         return self.code, meta
 
     def match_transform(self, e):
@@ -1507,7 +1493,7 @@ class VerbPhrase(Phrase):
         t: list of tuples
            List of modified events, since multiple events can come from one single event
         """
-        print('line 1410: match_transform()')
+        # print('line 1410: match_transform()')
         def recurse(pdict, event, a2v={}, v2a={}):
             path = pdict
             if isinstance(pdict, list):
@@ -1592,13 +1578,13 @@ class VerbPhrase(Phrase):
         False if no match, dict of match if present.
 
         """
-        print('VP.match_pattern()')
+        # print('VP.match_pattern()')
         meaning = self.verbclass
         code = self.code
         def match_phrase(path, phrase):
             # Having matched the head of the phrase, this matches the full noun
             # phrase, if specified
-            print('VP.match_phrase()')
+            # print('VP.match_phrase()')
             if not phrase:
                 return False
             for item in filter(lambda b: b.text in path, phrase.children):
@@ -1606,15 +1592,15 @@ class VerbPhrase(Phrase):
                 match = reroute(subpath, lambda a: match_phrase(a, item.head_phrase))
                 if match:
                     item.color = True
-                    print('line 1391: exit VP.match_phrase()')
+                    # print('line 1391: exit VP.match_phrase()')
                     return match
-            print('line 1393: exit VP.match_phrase() by reroute')
+            # print('line 1393: exit VP.match_phrase() by reroute')
             return reroute(path, lambda a: match_phrase(a, phrase.head_phrase))
 
         def match_noun(path, phrase=self if not self.check_passive() else self.get_S(), preplimit=0):
             # Matches a noun or head of noun phrase
             # --              print('mn-entry')
-            print('VP.match_noun()')
+            # print('VP.match_noun()')
             noun_phrases = []
             if not phrase:
                 return False
@@ -1632,7 +1618,7 @@ class VerbPhrase(Phrase):
 
             for item in noun_phrases:
                 head, headphrase = item.get_head()
-                print('line 1420: head: ', head)
+                # print('line 1420: head: ', head)
 
                 if head and head in path:
                     subpath = path[head]
@@ -1647,12 +1633,12 @@ class VerbPhrase(Phrase):
                     #     return match
 
                     # Then check the other siblings
-                    print('line 1433: call match_phrase()')
+                    # print('line 1433: call match_phrase()')
                     match = reroute(subpath, (lambda a: match_phrase(a, item.head_phrase))
                                     if isinstance(item, NounPhrase) else None)  # pas 16.04.21: Trapped None by having reroute return False
                     if match:
                         headphrase.children[-1].color = True
-                        print('line 1440: exit VP.match_noun()')
+                        # print('line 1440: exit VP.match_noun()')
                         return match
 
             if '^' in path:
@@ -1661,7 +1647,7 @@ class VerbPhrase(Phrase):
                 return reroute(path['^'], lambda a: match_phrase(
                     a, phrase.head_phrase))
 # --              print('mn-reroute2')
-            print('line 1449: exit VP.match_pattern().match')
+#             print('line 1449: exit VP.match_pattern().match')
             return reroute(path, lambda a: match_phrase(a, phrase.head_phrase))
 
 #         def match_prep(path, phrase=self):
@@ -1728,8 +1714,8 @@ class VerbPhrase(Phrase):
             if self.check_passive():
                 return match_noun(path, self, 1)
             else:
-                print('exit VP.match_pattern()')
-                print('line 1513: call match_noun(path, self.get_S()): ')
+                # print('exit VP.match_pattern()')
+                # print('line 1513: call match_noun(path, self.get_S()): ')
                 return match_noun(path, self.get_S())
         return False
 
@@ -1869,9 +1855,9 @@ class Sentence:
         logger = logging.getLogger('petr_log')
         logger.info(self.txt)
         logger.info(self.events)
-        print(label)
+        # print(label)
         for la in self.metadata['nouns']:
-            print('    ', la)
+            # print('    ', la)
             logger.info('    ' + str(la))
 
     def get_metadata(self, entry):
@@ -1984,7 +1970,7 @@ class Sentence:
                                         # aren't going into 'meta'
 
             self.events = list(set(valid))
-            print("end:",events)
+            # print("end:",events)
 
             #测试用
             import globalConfigPara as gcp
