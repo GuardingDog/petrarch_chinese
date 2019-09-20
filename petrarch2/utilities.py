@@ -248,7 +248,7 @@ def extract_phrases(sent_dict, sent_id):
 				phst = words + ' ' + phst
 		# --            print('   GEP2:',phst)
 		return get_text_phrase(phst)
-	def get_event_root(verb_list):
+	def get_event_root(verb_list , evt):
 		phst = ''
 		words = ''
 		for st in verb_list:
@@ -257,10 +257,16 @@ def extract_phrases(sent_dict, sent_id):
 					st,
 					basestring):  # handles those  ~ a (a b Q) SAY = a b Q cases I haven't figured out yet [pas 16.04.20]
 				continue
-			if st[1] :
+
+			if st[1]:
+				if evt[2] and st[1][0:2] == evt[2][0:2] :
+
+
 					words = str(st[1])
+
+
 			else:
-					words = 'there are no eventroot'
+				words = 'there are no eventroot'
 			if words not in phst:  # 16.04.28: verbs are occasionally duplicated in 'meta' -- this is just a hack to get around that at the moment
 				phst = words + ' ' + phst
 		# --            print('   GEP2:',phst)
@@ -293,7 +299,7 @@ def extract_phrases(sent_dict, sent_id):
 		# 'TAR-ROOT'
 		if PETRglobals.WriteEventRoot:
 		# if True:
-			text_dict[evt][5] = get_event_root(sent_dict['meta'][evt])  # 'SRC-ROOT'
+			text_dict[evt][5] = get_event_root(sent_dict['meta'][evt] , evt)  # 'SRC-ROOT'
 
 	return text_dict
 

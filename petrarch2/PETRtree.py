@@ -857,6 +857,7 @@ class VerbPhrase(Phrase):
         self.get_meaning = self.return_meaning
 
         c, meta = self.get_code()
+
         # print('VP-gm-0:',self.get_text())
         # print('VP-gm-1:',c, meta)
         if c:
@@ -880,6 +881,7 @@ class VerbPhrase(Phrase):
 
         def complete_events(events, prepIndex):
 
+
             new_events = []
             for index, i in enumerate(events):
                 if index in prepIndex:
@@ -889,7 +891,10 @@ class VerbPhrase(Phrase):
                         if i not in new_events:
                             new_events.append(i)
                     else:
-                        new_events.append((i[0], events[low_index][1], i[2]))
+                        e = (i[0], events[low_index][1], i[2])
+                        self.sentence.metadata[id(e)] = [i , e,meta, 7]
+                        new_events.append(e)
+
             return new_events
 
         def resolve_events(event):
@@ -982,14 +987,7 @@ class VerbPhrase(Phrase):
         low, neg = self.get_lower
         if not low:
             low = ""
-        '''
-        if neg and c:
-            c = c * (-1)
-            print("2333333333333333333333333333333")
-            print(c)
-            print(low)
-        跟下面的neg_events功能重复 且整个样例只有一个进到这里 unicode*-1 变成''没了 改为下面的形式e = (up, low, c if not neg else u'-'+c)
-        '''
+
         if isinstance(low, list):
             for i, x in enumerate(low) :
                 print(i,x)
@@ -1008,7 +1006,7 @@ class VerbPhrase(Phrase):
         elif not s_options:
             if up or c:
                 e = (up, low, c if not neg else u'-'+str(c))
-                #self.sentence.metadata[id(e)] = [None, e, 4]
+                self.sentence.metadata[id(e)] = [None, e,meta, 4]
                 events.append(e)
 
             elif low:
@@ -1029,8 +1027,8 @@ class VerbPhrase(Phrase):
                         if isinstance(ev[1], list):
                             for item in ev[1]:
                                 local = (ev[0], item, ev[2])
-                                # self.sentence.metadata[id(local)] = [
-                                #     ev, item, 5]
+                                self.sentence.metadata[id(local)] = [
+                                     ev, item, 5]
                                 events.append(local)
                         else:
                             events += resolve_events(event)
@@ -1047,7 +1045,7 @@ class VerbPhrase(Phrase):
             if isinstance(evs, tuple):
                 for j in evs[0]:
                     maps.append(j)
-                    #self.sentence.metadata[id(j)] = [i, evs[1], 6]
+                    self.sentence.metadata[id(j)] = [i, evs[1], 6]
             else:
                 maps += evs
         self.meaning = maps
@@ -1335,19 +1333,10 @@ class VerbPhrase(Phrase):
         meta = []
         dict = PETRglobals.VerbDict['verbs']
         patterns = PETRglobals.VerbDict['phrases']
-        # print("self.children[0].label:",self.children[0].label)
-        # if(self.children[0].label=="LB"):
-        #     print("IP in VP",self.children[1].children[1].get_head()[0])
-            # verb=self.children[1].children[1].get_head()[0]
-        # verb = "TO" if self.children[0].label == "TO" else self.get_head()[0]
+
 
         verb=""
-        # if(self.children[0].label=="LB"):
-        #     try:
-        #         verb = self.children[1].children[1].get_head()[0]
-        #         #verb = filter(lambda a: a.label == 'VV', self.children[1].children[1].children[0].children)[0].text
-        #     except:
-        #         verb = self.get_head()[0]
+
         if(self.children[0].label=="SB" or self.children[0].label=="LB" ):
             if(self.children[1].label=="IP"):
                 try:
@@ -1365,39 +1354,27 @@ class VerbPhrase(Phrase):
                     verb = self.get_head()[0]
             else:
                 try:
-                    # verb = self.get_head()[0]
-                    #verb = filter(lambda a: a.label == 'VV', self.children)[0].text
+
                     for item in self.children:
                         if(item.label=="VP"):
                             verb=filter(lambda a: a.label == 'VV', item.children)[0].text
                 except:
                     verb = self.get_head()[0]
         else:
-            # verb = self.get_head()[0]
-            # verb1 = list(map(lambda b: b.text, filter(lambda a: a.label == 'VV', self.children)))
+
             try:
-                # verb = self.get_head()[0]
                 verb = filter(lambda a: a.label == 'VV', self.children)[0].text
             except:
                 verb = self.get_head()[0]
-        # verb=self.children[1].children[1].get_head()[0] if self.children[0].label=="LB"else self.get_head()[0]
         meta.append(verb)
 
         meaning = ""
         path = dict
-        # if (self.children[0].label == "SB"):
-        #     passive=True
-        # print("passive:",passive)
-        # print("line 1296: verb: ", json.dumps(verb, ensure_ascii=False, encoding='utf-8'))
 
         if verb in dict:
             code = 0
-            # print("verb:", verb)
             path = dict[verb]
-            # print("path:", json.dumps(path, ensure_ascii=False, encoding='utf-8'))
-            # print('line 1210: path:', json.dumps(path, ensure_ascii=False, encoding='utf-8'))
             if ['#'] == path.keys():
-                #print("123:",path.keys())
                 path = path['#']
                 if True or path.keys() == ['#']:  # Pre-compounds are weird
                     try:
@@ -1405,24 +1382,17 @@ class VerbPhrase(Phrase):
                         meaning = path['#']['meaning']
                         #添加code、meaning 用于eventroot抽取
                         eventRoot = code +' '+ meaning
+
                         meta.append(eventRoot)
-                       # meta.append(code)
-                       # meta.append(meaning)
+
                         self.verbclass = meaning if not meaning == "" else verb
                         if not code == '':
-                            # print("s:",code)
                             active = utilities.convert_code(code) # TODO : passive不要了 active = code 本身 相应的要改resolve events ok
-                            # print(active)
                             self.code = active
-                            # print("line 1223: verb_code: ", utilities.convert_code(active, 0))
                     except:
                         self.code = (0, 0, [])
             else:
                 #else暂时并未使用
-
-                #print(path.keys())
-                # Post - compounds
-                #print("path:",path)
 
                 for child in self.children:
                     if child.label in ["PRT", "ADVP"]:
@@ -1442,13 +1412,12 @@ class VerbPhrase(Phrase):
                     except:
                         pass
 
-# --          print('++1')
 
         match = self.match_pattern()
-# --          print('++2')
         if match:
             # --              print('++4',match)
             # --              print('++3',match['line'])
+
             meta.append(match['line'])
             print("match:",match)
             print("match_code:",match['code'])
@@ -1461,7 +1430,6 @@ class VerbPhrase(Phrase):
             self.code = active
             # TODO ：刪掉下面if ok
 
-        # print('exit VP.get_code()')
         return self.code, meta
 
     def match_transform(self, e):
@@ -1862,9 +1830,13 @@ class Sentence:
         store = ""
         meta_total = []
         while id(next) in metadict:
+            print(id(next))
             store = metadict[id(next)]
             meta_total.append(store)
             next = store[0]
+            print(id(next))
+            print(id(next))
+
         return map(lambda a: a[-2] if len(a) > 1 else a[0], meta_total[::-1])
 
     def return_events(self):
