@@ -295,6 +295,8 @@ def do_coding(event_dict):
                                 'meta']['eventtext'] = {}
                             event_dict[key]['sents'][sent][
                                 'meta']['actorroot'] = {}
+                            event_dict[key]['sents'][sent][
+                                'meta']['eventroot'] = {}
 # --                            print('DC1:',text_dict) # --
                             for evt in coded_events:
                                 if evt in text_dict:  # 16.04.30 pas bypasses problems with expansion of compounds
@@ -304,6 +306,8 @@ def do_coding(event_dict):
                                         'eventtext'][evt] = text_dict[evt][2]
                                     event_dict[key]['sents'][sent]['meta'][
                                         'actorroot'][evt] = text_dict[evt][3:5]
+                                    event_dict[key]['sents'][sent]['meta'][
+                                        'eventroot'][evt] = text_dict[evt][5]
 
                 if coded_events and PETRglobals.IssueFileName != "":
                     event_issues = get_issues(SentenceText)

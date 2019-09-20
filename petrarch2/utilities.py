@@ -225,15 +225,15 @@ def extract_phrases(sent_dict, sent_id):
 					st,
 					basestring):  # handles those  ~ a (a b Q) SAY = a b Q cases I haven't figured out yet [pas 16.04.20]
 				continue
-			if len(st) > 1:
-				if '[' in st[1]:  # create a phrase for a pattern
-					sta = st[1][1:st[1].find('[')].strip()
+			if len(st) > 2:
+				if '[' in st[-1]:  # create a phrase for a pattern
+					sta = st[-1][1:st[-1].find('[')].strip()
 					words = sta.replace('*', st[0])
 					words = words.replace('(', '')
 					words = words.replace(')', '')
-				elif isinstance(st[1], tuple):  # create phrase based on a tuple patterns
+				elif isinstance(st[-1], tuple):  # create phrase based on a tuple patterns
 					words = st[0]
-					for tp in st[1:]:
+					for tp in st[-1:]:
 						words += ' ' + tp[0]
 						if len(tp[1]) > 0:
 							words += ' ' + tp[1][0]
@@ -248,6 +248,23 @@ def extract_phrases(sent_dict, sent_id):
 				phst = words + ' ' + phst
 		# --            print('   GEP2:',phst)
 		return get_text_phrase(phst)
+	def get_event_root(verb_list):
+		phst = ''
+		words = ''
+		for st in verb_list:
+			# --            print('   GEP1:',st)
+			if isinstance(
+					st,
+					basestring):  # handles those  ~ a (a b Q) SAY = a b Q cases I haven't figured out yet [pas 16.04.20]
+				continue
+			if st[1] :
+					words = str(st[1])
+			else:
+					words = 'there are no eventroot'
+			if words not in phst:  # 16.04.28: verbs are occasionally duplicated in 'meta' -- this is just a hack to get around that at the moment
+				phst = words + ' ' + phst
+		# --            print('   GEP2:',phst)
+		return phst
 
 	logger = logging.getLogger('petr_log')
 	text_dict = {}  # returns texts in lists indexed by evt
@@ -272,7 +289,11 @@ def extract_phrases(sent_dict, sent_id):
 		if PETRglobals.WriteActorRoot:
 		# if True:
 			text_dict[evt][3] = get_actor_root(evt[0])  # 'SRC-ROOT'
-			text_dict[evt][4] = get_actor_root(evt[1])  # 'TAR-ROOT'
+			text_dict[evt][4] = get_actor_root(evt[1])
+		# 'TAR-ROOT'
+		if PETRglobals.WriteEventRoot:
+		# if True:
+			text_dict[evt][5] = get_event_root(sent_dict['meta'][evt])  # 'SRC-ROOT'
 
 	return text_dict
 
@@ -301,19 +322,19 @@ def story_filter(story_dict, story_id):
 				list is optional.
 	"""
 
-	def get_event_root(verb_list):
-		result = []
-		for verbs in verb_list:
-			for verb in verbs:
-				if verb in PETRglobals.VerbDict['verbs']:
-					result.append(PETRglobals.VerbDict['verbs'][verb]['#']['#']['meaning'])
-
-		result = list(set(result))
-		if len(result) == 1:
-			result = result[0]
-		else:
-			result = ' '.join(result)
-		return result
+	# def get_event_root(verb_list):
+	# 	result = []
+	# 	for verbs in verb_list:
+	# 		for verb in verbs:
+	# 			if verb in PETRglobals.VerbDict['verbs']:
+	# 				result.append(PETRglobals.VerbDict['verbs'][verb]['#']['#']['meaning'])
+	#
+	# 	result = list(set(result))
+	# 	if len(result) == 1:
+	# 		result = result[0]
+	# 	else:
+	# 		result = ' '.join(result)
+	# 	return result
 
 	filtered = defaultdict(dict)
 	story_date = story_dict['meta']['date']
@@ -321,14 +342,7 @@ def story_filter(story_dict, story_id):
 		sent_dict = story_dict['sents'][sent]
 		sent_id = '{}_{}'.format(story_id, sent)
 		if 'events' in sent_dict:
-			"""print('ut:SF1',sent,'\n',story_dict['sents'][sent])
-			print('ut:SF2: ',story_dict['meta'])
-			print('ut:SF3: ',story_dict['sents'][sent]['meta'])
-			print('ut:SF4: ',story_dict['sents'][sent]['events'])"""
-			"""if  PETRglobals.WriteActorText or PETRglobals.WriteEventText:  # this is the old call before this was moved out to do_coding()
-				text_dict = extract_phrases(story_dict['sents'][sent],sent_id)
-			else:
-				text_dict = {}"""
+
 
 			for event in story_dict['sents'][sent]['events']:
 				# do not print unresolved agents
@@ -363,7 +377,9 @@ def story_filter(story_dict, story_id):
 							filtered[event_tuple]['actorroot'] = sent_dict[
 								'meta']['actorroot'][event_tuple[1:]]
 						if PETRglobals.WriteEventRoot:
-							filtered[event_tuple]['eventroot'] = get_event_root(sent_dict['meta'][event_tuple[1:]])
+							#filtered[event_tuple]['eventroot'] = get_event_root(sent_dict['meta'][event_tuple[1:]])
+							filtered[event_tuple]['eventroot'] = sent_dict[
+								'meta']['eventroot'][event_tuple[1:]]
 
 				except IndexError:  # 16.04.29 pas it would be helpful to log an error here...
 					pass

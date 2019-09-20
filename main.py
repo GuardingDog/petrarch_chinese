@@ -111,6 +111,9 @@ if __name__ == "__main__":
     if os.path.exists(output_filename):
         with open(output_filename, 'w') as fw:
             fw.write('')
+    if os.path.exists('evtss.txt'):
+        with open('evtss.txt', 'w') as fw:
+            fw.write('')
 
     #flag = True
     if flag:

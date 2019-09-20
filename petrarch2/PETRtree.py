@@ -924,7 +924,7 @@ class VerbPhrase(Phrase):
                     returns = []
                     for source in up:
                         e = (first, source, third)
-                        self.sentence.metadata[id(e)] = [event, up, 1]
+                        self.sentence.metadata[id(e)] = [event, up, meta, 1]
                         returns.append(e)
                     return returns
                 second = 'passive'
@@ -942,15 +942,9 @@ class VerbPhrase(Phrase):
         up = self.get_upper()
         #print('line 877: get_upper()', json.dumps(up, ensure_ascii=False, encoding='utf-8'))
         if self.check_passive():
-            # Check for source in preps
             source_options = []
             target_options = up
-            # tem=self;
-            # while(tem.parent.label=="VP"):
-            #     tem=tem.parent
-            # print("接受者：",tem.get_upper())
-            # print("被的父节点",tem.parent.label)
-            # print("target_options:",target_options)
+
             for child in self.children:
                 # print("aaa:",child.label)
                 if(child.label=="IP"):
@@ -963,23 +957,14 @@ class VerbPhrase(Phrase):
                 elif(child.label=="PP"):
                     for item in child.children:
                         if(item.label=="NP"):
-                            # print("bbb:",item.get_meaning())
                             source_options+=item.get_meaning()
 
 
-                # if isinstance(child, PrepPhrase):
-                #     if child.get_prep() in ["BY", "FROM", "IN"]:
-                #         source_options += child.get_meaning()
-                #         meta.append((child.prep, child.get_meaning()))
-                #     elif child.get_prep() in ["AT", "AGAINST", "INTO", "TOWARDS"]:
-                #         target_options += child.get_meaning()
-                #         meta.append((child.prep, child.get_meaning()))
             if not target_options:
                 target_options = ["passive"]
             if not source_options:
                 source_options=["passive"]
-            # print("target_options",target_options)
-            if source_options or c:
+            if  c :
 
                 for i in target_options:
                     e = (
@@ -1006,6 +991,8 @@ class VerbPhrase(Phrase):
         跟下面的neg_events功能重复 且整个样例只有一个进到这里 unicode*-1 变成''没了 改为下面的形式e = (up, low, c if not neg else u'-'+c)
         '''
         if isinstance(low, list):
+            for i, x in enumerate(low) :
+                print(i,x)
             prepIndex_low=[i for i,x in enumerate(low) if not isinstance(x, tuple)]
             prepIndex = [i for i, x in enumerate(self.children) if x.label=='PP']
             for event in low:
@@ -1015,13 +1002,15 @@ class VerbPhrase(Phrase):
                 events += resolve_events(event)
                # print("line 984 events")
                 #print(events)
+            #子节点存在介词，并且子节点内不包含事件，也就是包含了actor或者agent,则选择完善事件
             if len(prepIndex)>0 and len(prepIndex_low)>0 and self.children[prepIndex[0]].children[0].text in self.get_prep_dic():
                 events = complete_events(events, prepIndex_low)
         elif not s_options:
             if up or c:
                 e = (up, low, c if not neg else u'-'+str(c))
-                self.sentence.metadata[id(e)] = [None, e, 4]
+                #self.sentence.metadata[id(e)] = [None, e, 4]
                 events.append(e)
+
             elif low:
                 events.append(low)
 
@@ -1040,8 +1029,8 @@ class VerbPhrase(Phrase):
                         if isinstance(ev[1], list):
                             for item in ev[1]:
                                 local = (ev[0], item, ev[2])
-                                self.sentence.metadata[id(local)] = [
-                                    ev, item, 5]
+                                # self.sentence.metadata[id(local)] = [
+                                #     ev, item, 5]
                                 events.append(local)
                         else:
                             events += resolve_events(event)
@@ -1058,7 +1047,7 @@ class VerbPhrase(Phrase):
             if isinstance(evs, tuple):
                 for j in evs[0]:
                     maps.append(j)
-                    self.sentence.metadata[id(j)] = [i, evs[1], 6]
+                    #self.sentence.metadata[id(j)] = [i, evs[1], 6]
             else:
                 maps += evs
         self.meaning = maps
@@ -1071,9 +1060,7 @@ class VerbPhrase(Phrase):
 
     def check_passive(self):
         """
-        Check if the verb is passive under these conditions:
-            1) Verb is -ed form, which is notated by stanford as VBD or VBN
-            2) Verb has a form of "be" as its next highest verb
+        Check if the verb is passive :
 
         Parameters
         ----------
@@ -1395,6 +1382,7 @@ class VerbPhrase(Phrase):
                 verb = self.get_head()[0]
         # verb=self.children[1].children[1].get_head()[0] if self.children[0].label=="LB"else self.get_head()[0]
         meta.append(verb)
+
         meaning = ""
         path = dict
         # if (self.children[0].label == "SB"):
@@ -1415,6 +1403,11 @@ class VerbPhrase(Phrase):
                     try:
                         code = path['#']['code']
                         meaning = path['#']['meaning']
+                        #添加code、meaning 用于eventroot抽取
+                        eventRoot = code +' '+ meaning
+                        meta.append(eventRoot)
+                       # meta.append(code)
+                       # meta.append(meaning)
                         self.verbclass = meaning if not meaning == "" else verb
                         if not code == '':
                             # print("s:",code)
@@ -1425,6 +1418,8 @@ class VerbPhrase(Phrase):
                     except:
                         self.code = (0, 0, [])
             else:
+                #else暂时并未使用
+
                 #print(path.keys())
                 # Post - compounds
                 #print("path:",path)
@@ -1920,14 +1915,15 @@ class Sentence:
         try:
             for sent in events:
                 for event in sent:
-                    if event[1] == 'passive':
-                        event = (event[0], None, event[2])
+                    #passive 已经在前处理
+                    # if event[1] == 'passive':
+                    #     event = (event[0], None, event[2])
                     if isinstance(event, tuple) and isinstance(
                             event[1], basestring):
 
                         code = utilities.convert_code(event[2], 0)
                         print('checking event', event, utilities.convert_code(event[2], 0))
-                        if event[0] and event[1] and code:
+                        if event[0] and event[1] and code :
                             for source in event[0]:
                                 valid.append(
                                     (source.replace(
