@@ -1830,12 +1830,10 @@ class Sentence:
         store = ""
         meta_total = []
         while id(next) in metadict:
-            print(id(next))
             store = metadict[id(next)]
             meta_total.append(store)
             next = store[0]
-            print(id(next))
-            print(id(next))
+
 
         return map(lambda a: a[-2] if len(a) > 1 else a[0], meta_total[::-1])
 
@@ -1894,7 +1892,7 @@ class Sentence:
                             event[1], basestring):
 
                         code = utilities.convert_code(event[2], 0)
-                        print('checking event', event, utilities.convert_code(event[2], 0))
+                        #print('checking event', event, utilities.convert_code(event[2], 0))
                         if event[0] and event[1] and code :
                             for source in event[0]:
                                 valid.append(
