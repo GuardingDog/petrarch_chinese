@@ -257,16 +257,17 @@ def extract_phrases(sent_dict, sent_id):
 					st,
 					basestring):  # handles those  ~ a (a b Q) SAY = a b Q cases I haven't figured out yet [pas 16.04.20]
 				continue
+			if len(st) > 1:
 
-			if st[1]:
-				if evt[2] and st[1][0:2] == evt[2][0:2] :
-
-
-					words = str(st[1])
+				if st[1]:
+					if evt[2] and st[1][0:2] == evt[2][0:2] :
 
 
-			else:
-				words = 'there are no eventroot'
+						words = str(st[1])
+
+
+				else:
+					words = 'there are no eventroot'
 			if words not in phst:  # 16.04.28: verbs are occasionally duplicated in 'meta' -- this is just a hack to get around that at the moment
 				phst = words + ' ' + phst
 		# --            print('   GEP2:',phst)

@@ -527,7 +527,6 @@ def run(filepaths, out_file, s_parsed):
     # this is the routine called from main()
     print(filepaths)
     events = PETRreader.read_xml_input(filepaths, s_parsed)
-    print("123")
     if not s_parsed:
         events = utilities.stanford_parse(events)
 

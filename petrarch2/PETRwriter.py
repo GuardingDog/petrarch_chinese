@@ -140,7 +140,7 @@ def write_events(event_dict, output_file):
             code = filter(lambda a: not a == '\n', event[3])
 
             ids = ';'.join(filtered_events[event]['ids'])
-
+   
             if 'issues' in filtered_events[event]:
                 iss = filtered_events[event]['issues']
                 issues = ['{},{}'.format(k, v) for k, v in iss.items()]

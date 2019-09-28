@@ -41,6 +41,16 @@ class FromCorenlpConverter(PetrXmlConverter):
 
     def parse(self, text):
         return self.nlp.parse(text)
+    def ner(self , text):
+        #return self.nlp.ner(text)
+        ner_entities = self.nlp.ner(text)
+        locations = ""
+        for index , entity in enumerate(ner_entities):
+            if 'STATE_OR_PROVINCE' == entity[1]:
+                locations +=entity[0]
+        return locations
+
+
 
     def find_corenlp(self):
         corenlp_paths = glob.glob("stanford-corenlp-full-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")

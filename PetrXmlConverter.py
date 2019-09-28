@@ -17,6 +17,7 @@ class Attr(Enum):
     content = 'content'
     text = 'text'
     parse = 'parse'
+    ner = 'ner'
 
 
 class PetrXmlConverter:
@@ -89,7 +90,8 @@ class PetrXmlConverter:
         for sent in content.split('\n'):
             sentences.append({
                 Attr.text: sent,
-                Attr.parse: self.parse(sent)
+                Attr.parse: self.parse(sent),
+                Attr.ner:self.ner(sent)
             })
         return sentences
 
@@ -117,6 +119,11 @@ class PetrXmlConverter:
                 parse_text = xml_doc.createTextNode('\n' + event[Attr.content][sent_i][Attr.parse] + '\n')
                 xml_parse.appendChild(parse_text)
 
+                # <ner> element
+                xml_ner = xml_doc.createElement("Ner")
+                ner_text = xml_doc.createTextNode('\n' + "".join(event[Attr.content][sent_i][Attr.ner]) + '\n')
+                xml_ner.appendChild(ner_text)
+
                 # <Sentence> element
                 xml_sentence = xml_doc.createElement('Sentence')
                 xml_sentence.setAttribute('id', event[Attr.id] + '_' + str(sent_i + 1))
@@ -124,6 +131,7 @@ class PetrXmlConverter:
                 xml_sentence.setAttribute('source', event[Attr.source])
                 xml_sentence.setAttribute('date', event[Attr.date])
                 xml_sentence.appendChild(xml_text)
+                xml_sentence.appendChild(xml_ner)
                 xml_sentence.appendChild(xml_parse)
 
                 xml_root.appendChild(xml_sentence)
