@@ -7,6 +7,7 @@ import socket
 import reader as reader
 from argparse import Namespace
 import time
+import logging
 
 from FromCorenlpConverter import FromCorenlpConverter
 from petrarch2.petrarch2 import main as petrarch2_main
@@ -62,6 +63,9 @@ def kill_process(port):
 
 
 if __name__ == "__main__":
+    # logging confiig
+    logging.basicConfig(filename="test.log", filemode="ab+", level=logging.ERROR)
+
     # If you are using python2, the first two lines are needed.
     reload(sys)
     sys.setdefaultencoding('utf-8')
@@ -99,12 +103,15 @@ if __name__ == "__main__":
         print("程序将在"+str(port)+"号端口启动")
 
     formatted_lines = []
-    with open(input_path+input_name , 'r') as fp:
+    with open(input_path+input_name, 'r') as fp:
         lines = fp.readlines()
         for index, line in enumerate(lines):
-            if line[0] == '#':
-                new_line = '{}|NULL|NULL|NULL|2018-09-08 00:00:00|NULL|NULL|NULL|{}|NULL\n'.format(index, line.replace('\n', '').replace('#', ''))
-                formatted_lines.append(new_line)
+            elements = line.split("\t")
+            new_line = ""
+            for i, element in enumerate(elements):
+                new_line += element
+                new_line += "" if i == len(elements) - 1 else "|"
+            formatted_lines.append(new_line)
     with open(input_path + format_text + '.txt', 'w') as fw:
         fw.writelines(formatted_lines)
 

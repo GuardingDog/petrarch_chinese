@@ -24,6 +24,7 @@ class FromCorenlpConverter(PetrXmlConverter):
     def generate_events(self):
         with open(self.input_path, 'r') as source:
             for line in source.readlines():
+                # article
                 if not len(line) == 0:
                     properties = line.replace('\n', '').split('|')
                     event = {
@@ -32,15 +33,25 @@ class FromCorenlpConverter(PetrXmlConverter):
                         Attr.source: properties[6],
                         Attr.url: properties[9]
                     }
-                    content = re.sub(r'\s', '', properties[8])
-                    # parse = self.parse(content)
-                    # event[Attr.content] = self.sep_sentence(parse)
-                    event[Attr.content] = self.sep_sentence(content)
-                    print('parse event {0}'.format(event[Attr.id]))
+                    contents = []
+                    # paragraph
+                    paragraphs = properties[8].split(" ")
+                    for index, p in enumerate(paragraphs):
+                        p = p.strip('\r\n').replace(u'\u3000', u'').replace(u'\xa0', u'')
+                        if p == "":
+                            continue
+                        # sentence
+                        sentences = self.sep_sentence(event[Attr.id], "e" if index == len(paragraphs) - 1 else index, p)
+                        contents.append(sentences)
+                    event[Attr.content] = contents
                     self.events.append(event)
 
     def parse(self, text):
+        text = text.encode("utf-8")
         return self.nlp.parse(text)
+
+
+
     def ner(self , text):
         #return self.nlp.ner(text)
         ner_entities = self.nlp.ner(text)

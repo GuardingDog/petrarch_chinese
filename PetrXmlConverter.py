@@ -6,6 +6,7 @@ from random import random
 from xml.dom.minidom import Document
 from enum import Enum
 import globalConfigPara as gcp
+import logging
 
 
 
@@ -80,19 +81,34 @@ class PetrXmlConverter:
     #             Attr.parse: self.parse(sent)
     #         })
     #     return sentences
-    def sep_sentence(self, content):
+    def sep_sentence(self, article_id, paragraph_id, content):
         sentences = []
         content = content.replace('\u3000', '').replace('　', '')\
             .replace('。', '\n') \
-            .replace('；', '，\n')\
+            .replace('；', '\n')\
             .replace('。\n”', '”\n')\
+            .replace("●","")\
             .strip(' \n')
-        for sent in content.split('\n'):
-            sentences.append({
-                Attr.text: sent,
-                Attr.parse: self.parse(sent),
-                Attr.ner:self.ner(sent)
-            })
+        for i, sent in enumerate(content.split('\n')):
+            # id = article_id + "-" + paragraph_id + _ + sentence_id  "50252-e_1"
+            try:
+                sent = sent.strip('\r\n').replace(u'\xa0', u'')
+                if sent=="":
+                    continue
+                parse_text = self.parse(sent)
+                sent_id = str(article_id) + "-" + str(paragraph_id) + "_" + str(i)
+                print "正在处理:" + sent_id
+                sentences.append({
+                    Attr.id: sent_id,
+                    Attr.text: sent,
+                    Attr.parse: parse_text,
+                    Attr.ner: self.ner(sent)
+                })
+            except Exception as e:
+                message = "Error in PetrXmlConverter parse:" + str(article_id) + "\t" + str(paragraph_id) + "\t" + str(i)
+                logging.exception(message)
+                continue
+
         return sentences
 
     def generate_xml(self):
@@ -108,33 +124,34 @@ class PetrXmlConverter:
                 print('\033[1;31m'+'Event without proper keys. Please check event format.\n{}'.format(event)+'\033[0m')
                 continue
 
-            for sent_i in range(len(event[Attr.content])):
-                # <Text> element
-                xml_text = xml_doc.createElement('Text')
-                text_text = xml_doc.createTextNode('\n' + event[Attr.content][sent_i][Attr.text] + '\n')
-                xml_text.appendChild(text_text)
+            for paragraph in event[Attr.content]:
+                for sent in paragraph:
+                    # <Text> element
+                    xml_text = xml_doc.createElement('Text')
+                    text_text = xml_doc.createTextNode('\n' + sent[Attr.text] + '\n')
+                    xml_text.appendChild(text_text)
 
-                # <Parse> element
-                xml_parse = xml_doc.createElement("Parse")
-                parse_text = xml_doc.createTextNode('\n' + event[Attr.content][sent_i][Attr.parse] + '\n')
-                xml_parse.appendChild(parse_text)
+                    # <Parse> element
+                    xml_parse = xml_doc.createElement("Parse")
+                    parse_text = xml_doc.createTextNode('\n' + sent[Attr.parse] + '\n')
+                    xml_parse.appendChild(parse_text)
 
-                # <ner> element
-                xml_ner = xml_doc.createElement("Ner")
-                ner_text = xml_doc.createTextNode('\n' + "".join(event[Attr.content][sent_i][Attr.ner]) + '\n')
-                xml_ner.appendChild(ner_text)
+                    # <ner> element
+                    xml_ner = xml_doc.createElement("Ner")
+                    ner_text = xml_doc.createTextNode('\n' + "".join(sent[Attr.ner]) + '\n')
+                    xml_ner.appendChild(ner_text)
 
-                # <Sentence> element
-                xml_sentence = xml_doc.createElement('Sentence')
-                xml_sentence.setAttribute('id', event[Attr.id] + '_' + str(sent_i + 1))
-                xml_sentence.setAttribute('sentence', 'True')
-                xml_sentence.setAttribute('source', event[Attr.source])
-                xml_sentence.setAttribute('date', event[Attr.date])
-                xml_sentence.appendChild(xml_text)
-                xml_sentence.appendChild(xml_ner)
-                xml_sentence.appendChild(xml_parse)
+                    # <Sentence> element
+                    xml_sentence = xml_doc.createElement('Sentence')
+                    xml_sentence.setAttribute('id', sent[Attr.id])
+                    xml_sentence.setAttribute('sentence', 'True')
+                    xml_sentence.setAttribute('source', event[Attr.source])
+                    xml_sentence.setAttribute('date', event[Attr.date])
+                    xml_sentence.appendChild(xml_text)
+                    xml_sentence.appendChild(xml_ner)
+                    xml_sentence.appendChild(xml_parse)
 
-                xml_root.appendChild(xml_sentence)
+                    xml_root.appendChild(xml_sentence)
 
         xml_doc.appendChild(xml_root)
 

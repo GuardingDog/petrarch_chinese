@@ -250,7 +250,12 @@ def do_coding(event_dict):
                 sentence = PETRtree.Sentence(treestr, SentenceText, Date)
                 print(sentence.txt)
                 # this is the entry point into the processing in PETRtree
-                coded_events, meta = sentence.get_events()
+                try:
+                    coded_events, meta = sentence.get_events()
+                except Exception as e:
+                    message = "ERROR IN PETRARCH2 DO_CODING:" +  SentenceID + "\n" + sentence.txt + str(e) + "\n"
+                    logging.exception(message)
+
                 # print("coded_events:",coded_events)
                 # print("meta:",meta)
 
