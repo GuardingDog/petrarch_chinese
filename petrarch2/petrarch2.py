@@ -215,6 +215,9 @@ def do_coding(event_dict):
         SkipStory = False
         print('\n\nProcessing story {}'.format(key))
         StoryDate = event_dict[key]['meta']['date']
+
+        if  StoryDate  == 'NULL':
+            continue
         for sent in val['sents']:
             print("sent:",sent)
             NSent += 1
@@ -227,9 +230,11 @@ def do_coding(event_dict):
                 SentenceText = event_dict[key]['sents'][sent]['content']
                 SentenceDate = event_dict[key]['sents'][sent][
                     'date'] if 'date' in event_dict[key]['sents'][sent] else StoryDate
+
                 Date = PETRreader.dstr_to_ordate(SentenceDate)
 
                 print("\n", SentenceID)
+
                 parsed = event_dict[key]['sents'][sent]['parsed']
                 treestr = parsed
                 disc = check_discards(SentenceText)
@@ -242,7 +247,7 @@ def do_coding(event_dict):
                     else:
                         print("Discard story:", disc[1])
                         logger.info('\tStory discard. {}'.format(disc[1]))
-                        SkipStory = True
+                        SkipStory = False
                         NDiscardStory += 1
                         break
 
@@ -302,6 +307,10 @@ def do_coding(event_dict):
                                 'meta']['actorroot'] = {}
                             event_dict[key]['sents'][sent][
                                 'meta']['eventroot'] = {}
+                            event_dict[key]['sents'][sent][
+                                'meta']['Source'] = {}
+                            event_dict[key]['sents'][sent][
+                                'meta']['Target'] = {}
 # --                            print('DC1:',text_dict) # --
                             for evt in coded_events:
                                 if evt in text_dict:  # 16.04.30 pas bypasses problems with expansion of compounds
@@ -313,6 +322,10 @@ def do_coding(event_dict):
                                         'actorroot'][evt] = text_dict[evt][3:5]
                                     event_dict[key]['sents'][sent]['meta'][
                                         'eventroot'][evt] = text_dict[evt][5]
+                                    event_dict[key]['sents'][sent]['meta'][
+                                        'Source'][evt] = text_dict[evt][0]
+                                    event_dict[key]['sents'][sent]['meta'][
+                                        'Target'][evt] = text_dict[evt][1]
 
                 if coded_events and PETRglobals.IssueFileName != "":
                     event_issues = get_issues(SentenceText)

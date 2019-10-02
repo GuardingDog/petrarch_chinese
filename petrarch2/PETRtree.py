@@ -1777,9 +1777,10 @@ class Sentence:
         root = Phrase(segs[0][1:], self.date, self)
         level_stack = [root]
         existentials = []
+        text_bracket_num = 0;
 
         for element in segs[1:]:
-            if element.startswith("("):
+            if element.startswith("(") and len(element) > 1 :
                 lab = element[1:]
                 if lab == "NP":
                     new = NounPhrase(lab, self.date, self)
@@ -1789,6 +1790,7 @@ class Sentence:
                 elif lab == "PP":
                     new = PrepPhrase(lab, self.date, self)
                 else:
+
                     new = Phrase(lab, self.date, self)
                     if lab == "EX":
                         existentials.append(new)
@@ -1797,11 +1799,17 @@ class Sentence:
                 new.index = len(level_stack[-1].children)
                 level_stack[-1].children.append(new)
                 level_stack.append(new)
+            elif element.startswith("(") and len(element) == 1 :
+                text_bracket_num += 1
             elif element.endswith(")"):
-                try:
-                    level_stack.pop()
-                except:
-                    break
+                if text_bracket_num :
+                    text_bracket_num -= 1
+                    continue
+                else:
+                    try:
+                        level_stack.pop()
+                    except:
+                        break
             else:
                 level_stack[-1].text = element
                 self.txt += " " + element

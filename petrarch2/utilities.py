@@ -349,8 +349,6 @@ def story_filter(story_dict, story_id):
 		sent_dict = story_dict['sents'][sent]
 		sent_id = '{}_{}'.format(story_id, sent)
 		if 'events' in sent_dict:
-
-
 			for event in story_dict['sents'][sent]['events']:
 				# do not print unresolved agents
 				try:
@@ -387,6 +385,16 @@ def story_filter(story_dict, story_id):
 							#filtered[event_tuple]['eventroot'] = get_event_root(sent_dict['meta'][event_tuple[1:]])
 							filtered[event_tuple]['eventroot'] = sent_dict[
 								'meta']['eventroot'][event_tuple[1:]]
+						if PETRglobals.WriteContent:
+							#filtered[event_tuple]['eventroot'] = get_event_root(sent_dict['meta'][event_tuple[1:]])
+							filtered[event_tuple]['content'] = sent_dict[
+								'content']
+						if PETRglobals.WriteSource :
+							filtered[event_tuple]['Source'] = sent_dict[
+								'meta']["Source"][event_tuple[1:]]
+						if PETRglobals.WriteTarget :
+							filtered[event_tuple]['Target'] = sent_dict[
+								'meta']["Target"][event_tuple[1:]]
 
 				except IndexError:  # 16.04.29 pas it would be helpful to log an error here...
 					pass

@@ -66,6 +66,9 @@ WriteActorRoot = True  # Include actor root in event record
 WriteActorText = True  # Include actor text in event record
 WriteEventText = True  # Include event text in event record
 WriteEventRoot = True
+WriteContent = True
+WriteSource = True
+WriteTarget =True
 
 RunTimeString = ''  # used in error and debugging files -- just set it once
 

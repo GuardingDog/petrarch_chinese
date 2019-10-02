@@ -159,6 +159,9 @@ def write_events(event_dict, output_file):
                     event[:3]) + '\t010\t' + '\t'.join(event[4:])
             else:
                 event_str = '\t'.join(event)
+
+
+
             # print(event_str)
             if joined_issues:
                 event_str += '\n\tjoined_issues\t{}\n'.format(joined_issues)
@@ -169,6 +172,25 @@ def write_events(event_dict, output_file):
                 event_str += '\tids\t{}\n\turl\t{}\n\tStorySource\t{}\n'.format(ids, url, StorySource)
             else:
                 event_str += '\tids\t{}\n\tStorySource\t{}\n'.format(ids, StorySource)
+            if PETRglobals.WriteContent:
+                if 'content' in filtered_events[event]:
+                    event_str += '\tcontent\t{}\n'.format(
+                        filtered_events[event]['content'])
+                else:
+                    event_str += '\tcontent\t---\n'
+            if PETRglobals.WriteSource:
+                if 'Source' in filtered_events[event]:
+                    event_str += '\tSource\t{}\n'.format(
+                        filtered_events[event]['Source'])
+                else:
+                    event_str += '\tSource\t---\n'
+
+            if PETRglobals.WriteTarget:
+                if 'Target' in filtered_events[event]:
+                    event_str += '\tTarget\t{}\n'.format(
+                        filtered_events[event]['Target'])
+                else:
+                    event_str += '\tTarget\t---\n'
 
             if PETRglobals.WriteActorText:
                 if 'actortext' in filtered_events[event]:
@@ -197,6 +219,7 @@ def write_events(event_dict, output_file):
                         filtered_events[event]['eventroot'])
                 else:
                     event_str += '\teventroot\t---\n'
+
 
             story_output.append(event_str)
 
