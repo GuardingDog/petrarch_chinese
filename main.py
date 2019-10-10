@@ -92,48 +92,52 @@ if __name__ == "__main__":
         flag = gcp.corenlp_parse
     if not gcp.corenlp_path == "":
         corenlp_path = gcp.corenlp_path
-    if not gcp.port == -1:# 自选端口情况
-        port = gcp.port
-        kill_process(port)
-        while (wait_process(port)):
-            print('端口一直被占用中,30秒后自动检测')
-            time.sleep(30)
-    else:
-        port = get_free_port()
-        print("程序将在"+str(port)+"号端口启动")
 
-    formatted_lines = []
-    with open(input_path+input_name, 'r') as fp:
-        lines = fp.readlines()
-        for index, line in enumerate(lines):
-            elements = line.split("\t")
-            new_line = ""
-            for i, element in enumerate(elements):
-                new_line += element
-                new_line += "" if i == len(elements) - 1 else "|"
-            formatted_lines.append(new_line)
-    with open(input_path + format_text + '.txt', 'w') as fw:
-        fw.writelines(formatted_lines)
+    for fileNum in range(6,100,1) :
+        if not gcp.port == -1:  # 自选端口情况
+            port = gcp.port
+            kill_process(port)
+            while (wait_process(port)):
+                print('端口一直被占用中,30秒后自动检测')
+                time.sleep(30)
+        else:
+            port = get_free_port()
+            print("程序将在" + str(port) + "号端口启动")
+        formatted_lines = []
+        with open(input_path+input_name+str(fileNum) + '.txt', 'r') as fp:
+            lines = fp.readlines()
+            for index, line in enumerate(lines):
+                elements = line.split("\t")
+                new_line = ""
+                for i, element in enumerate(elements):
+                    new_line += element
+                    new_line += "" if i == len(elements) - 1 else "|"
+                formatted_lines.append(new_line)
+        with open(input_path + format_text + '.txt', 'w') as fw:
+            fw.writelines(formatted_lines)
 
-    if os.path.exists(output_filename):
-        with open(output_filename, 'w') as fw:
-            fw.write('')
-    if os.path.exists('evtss.txt'):
-        with open('evtss.txt', 'w') as fw:
-            fw.write('')
+        if os.path.exists(output_filename):
+            with open(output_filename, 'a') as fw:
+                fw.write('the index of inputfiles: ' + str(fileNum) + "\n")
+                print('the index of inputfiles: ' + str(fileNum) + "\n")
+                fw.close()
+        if os.path.exists('evtss.txt'):
+            with open('evtss.txt', 'w') as fw:
+                fw.write('')
+                fw.close()
 
-    #flag = True
-    if flag:
-        converter = FromCorenlpConverter(input_path + format_text + '.txt', '', corenlp_path, port)
+        #flag = True
+        if flag:
+            converter = FromCorenlpConverter(input_path + format_text + '.txt', '', corenlp_path, port)
 
-        converter.run()
+            converter.run()
 
-        converter.__del__()
+            converter.__del__()
 
-    args = Namespace(command_name='batch', config=None, inputs=xml_output_path + xml_file_name + '.xml',
-                     nullactors=False, nullverbs=False, outputs=output_path + output_filename )
-    # args = Namespace(command_name='batch', config=None, inputs='petrarch2/test-ch2.xml', nullactors=False, nullverbs=False, outputs=xml_output_path + 'test-ch2' + '_result.txt')
-    petrarch2_main(args)
+        args = Namespace(command_name='batch', config=None, inputs=xml_output_path + xml_file_name + '.xml',
+                         nullactors=False, nullverbs=False, outputs=output_path + output_filename )
+        # args = Namespace(command_name='batch', config=None, inputs='petrarch2/test-ch2.xml', nullactors=False, nullverbs=False, outputs=xml_output_path + 'test-ch2' + '_result.txt')
+        petrarch2_main(args)
 
 
 

@@ -159,9 +159,6 @@ def write_events(event_dict, output_file):
                     event[:3]) + '\t010\t' + '\t'.join(event[4:])
             else:
                 event_str = '\t'.join(event)
-
-
-
             # print(event_str)
             if joined_issues:
                 event_str += '\n\tjoined_issues\t{}\n'.format(joined_issues)
@@ -230,7 +227,7 @@ def write_events(event_dict, output_file):
     event_output = [event for event in event_output if event]
 
     if output_file:
-        f = codecs.open(output_file, encoding='utf-8', mode='w')
+        f = codecs.open(output_file, encoding='utf-8', mode='a')
         for str in event_output:
             #             field = str.split('\t')  # debugging
             #            f.write(field[5] + '\n')

@@ -252,13 +252,21 @@ def do_coding(event_dict):
                         break
 
                 t1 = time.time()
-                sentence = PETRtree.Sentence(treestr, SentenceText, Date)
-                print(sentence.txt)
+                try:
+                    sentence = PETRtree.Sentence(treestr, SentenceText, Date)
+                    print(sentence.txt)
+                except Exception as e:
+
+                    message = "ERROR IN PETRARCH2 DO_CODING:" +  SentenceID + "\n" + SentenceText + str(e) + "\n"
+                    logging.exception(message)
+                    continue
+
+
                 # this is the entry point into the processing in PETRtree
                 try:
                     coded_events, meta = sentence.get_events()
                 except Exception as e:
-                    message = "ERROR IN PETRARCH2 DO_CODING:" +  SentenceID + "\n" + sentence.txt + str(e) + "\n"
+                    message = "ERROR IN PETRARCH2 DO_CODING:" +  SentenceID + "\n" + SentenceText + str(e) + "\n"
                     logging.exception(message)
 
                 # print("coded_events:",coded_events)
@@ -283,8 +291,8 @@ def do_coding(event_dict):
                     # levels of event_dict -- see the code about ten lines below -- and
                     # this is potentially confusing, so it probably would be useful to
                     # change one of those
+                del (sentence)
 
-                del(sentence)
                 times += code_time
                 sents += 1
                 # print('\t\t',code_time)
@@ -557,7 +565,7 @@ def run(filepaths, out_file, s_parsed):
     if PETRglobals.NullVerbs:
         PETRwriter.write_nullverbs(updated_events, 'nullverbs.' + out_file)
     elif PETRglobals.NullActors:
-        PETRwriter.write_nullactors(updated_events, 'nullactors.' + out_file)
+        PETRwriter.write_nullactors(updated_events, 'nullactors.txt')
     else:
         PETRwriter.write_events(updated_events, out_file)
 
