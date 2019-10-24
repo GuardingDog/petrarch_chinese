@@ -276,6 +276,8 @@ def do_coding(event_dict):
                 #print("meta:",meta)
                 # exit()
 
+
+                # 暂时只走了最后一条分支
                 code_time = time.time() - t1
                 if PETRglobals.NullVerbs or PETRglobals.NullActors:
                     event_dict[key]['meta'] = meta

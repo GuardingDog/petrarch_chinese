@@ -117,7 +117,13 @@ def write_events(event_dict, output_file):
     global StoryIssues
 
     event_output = []
-    for key in event_dict:
+    # 测试用
+    flag = False
+    import globalConfigPara as gcp
+    if not gcp.merge_event == "":
+        flag = gcp.merge_event
+
+    for key in sorted(event_dict):
         story_dict = event_dict[key]
         if not story_dict['sents']:
             continue    # skip cases eliminated by story-level discard
@@ -133,11 +139,32 @@ def write_events(event_dict, output_file):
             url = story_dict['meta']['url']
         else:
             url = ''
+
+        event_temp = []
+        event_str_temp = []
         for event in filtered_events:
             story_date = event[0]
             source = event[1]
             target = event[2]
             code = filter(lambda a: not a == '\n', event[3])
+            skip_flag = False
+
+            if flag:
+                n_code = int(code)
+                for pre_event in event_temp:
+                    if story_date == pre_event[0] and source == pre_event[1] and target == pre_event[2]:
+                        pre_code = int(filter(lambda a: not a == '\n', pre_event[3]))
+                        if n_code/10 == pre_code/10:
+                            if n_code % 10 <= pre_code %10:
+                                skip_flag = True
+                                break
+                            else:
+                                index = event_temp.index(pre_event)
+                                del event_temp[index]
+                                del event_str_temp[index]
+                                break
+            if skip_flag:
+                continue
 
             ids = ';'.join(filtered_events[event]['ids'])
    
@@ -217,9 +244,10 @@ def write_events(event_dict, output_file):
                 else:
                     event_str += '\teventroot\t---\n'
 
+            event_str_temp.append(event_str)
+            event_temp.append(event)
 
-            story_output.append(event_str)
-
+        story_output += event_str_temp
         story_events = '\n'.join(story_output)
         event_output.append(story_events)
 

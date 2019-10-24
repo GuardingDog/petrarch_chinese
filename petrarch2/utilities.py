@@ -345,7 +345,7 @@ def story_filter(story_dict, story_id):
 
 	filtered = defaultdict(dict)
 	story_date = story_dict['meta']['date']
-	for sent in story_dict['sents']:
+	for sent in sorted(story_dict['sents']):
 		sent_dict = story_dict['sents'][sent]
 		sent_id = '{}_{}'.format(story_id, sent)
 		if 'events' in sent_dict:

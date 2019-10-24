@@ -9,7 +9,6 @@ import globalConfigPara as gcp
 import logging
 
 
-
 class Attr(Enum):
     id = 'id'
     date = 'date'
@@ -26,7 +25,7 @@ class PetrXmlConverter:
         self.input_path = input_path
         if output_path == '':
             self.output_path = gcp.xml_output_path + gcp.xml_file_name + '.xml'
-            #self.output_path = gcp.xml_output_path + input_path.split('/')[-1].split('.')[0] + '.xml'
+            # self.output_path = gcp.xml_output_path + input_path.split('/')[-1].split('.')[0] + '.xml'
         else:
             self.output_path = output_path
         self.events = []
@@ -81,19 +80,30 @@ class PetrXmlConverter:
     #             Attr.parse: self.parse(sent)
     #         })
     #     return sentences
+
+    def format_text(self, content):
+        return content.replace('\u3000', '').replace('　', '') \
+            .replace('。', '\n') \
+            .replace('；', '\n') \
+            .replace('。\n”', '”\n') \
+            .replace("(","（")\
+            .replace(")","）")\
+            .replace("●", "") \
+            .replace("■","")\
+            .strip(' \n')
+            # .replace('”', "\"") \
+            # .replace('“', "\"") \
+            # .replace("，", ",") \
+
+
     def sep_sentence(self, article_id, paragraph_id, content):
         sentences = []
-        content = content.replace('\u3000', '').replace('　', '')\
-            .replace('。', '\n') \
-            .replace('；', '\n')\
-            .replace('。\n”', '”\n')\
-            .replace("●","")\
-            .strip(' \n')
+        content = self.format_text(content)
         for i, sent in enumerate(content.split('\n')):
             # id = article_id + "-" + paragraph_id + _ + sentence_id  "50252-e_1"
             try:
                 sent = sent.strip('\r\n').replace(u'\xa0', u'')
-                if sent=="":
+                if sent == "":
                     continue
                 parse_text = self.parse(sent)
                 sent_id = str(article_id) + "-" + str(paragraph_id) + "_" + str(i)
@@ -105,7 +115,8 @@ class PetrXmlConverter:
                     Attr.ner: self.ner(sent)
                 })
             except Exception as e:
-                message = "Error in PetrXmlConverter parse:" + str(article_id) + "\t" + str(paragraph_id) + "\t" + str(i)
+                message = "Error in PetrXmlConverter parse:" + str(article_id) + "\t" + str(paragraph_id) + "\t" + str(
+                    i)
                 logging.exception(message)
                 continue
 
@@ -121,7 +132,8 @@ class PetrXmlConverter:
             keys_check = [key in event.keys() for key in [Attr.id, Attr.date, Attr.source, Attr.content]]
             keys_check.sort()
             if not keys_check[0]:
-                print('\033[1;31m'+'Event without proper keys. Please check event format.\n{}'.format(event)+'\033[0m')
+                print('\033[1;31m' + 'Event without proper keys. Please check event format.\n{}'.format(
+                    event) + '\033[0m')
                 continue
 
             for paragraph in event[Attr.content]:
@@ -173,4 +185,3 @@ class PetrXmlConverter:
     def run(self):
         self.generate_events()
         self.generate_xml()
-
