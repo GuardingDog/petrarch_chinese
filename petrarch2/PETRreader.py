@@ -2179,8 +2179,15 @@ def read_xml_input(filepaths, parsed=False):
                         parsed_content)
 
                     # extract location by the following method(need debugging)
-                    LOCATION = PETRwriter.extract_location(parsed_content)
-                    print(LOCATION)
+                    try:
+                        LOCATION = PETRwriter.extract_location(parsed_content)
+                    except IndexError:
+                        print("'extract_location' method can not parse this tree :" +parsed_content)
+                        raise
+
+
+
+                    #print(LOCATION)
 
 
 

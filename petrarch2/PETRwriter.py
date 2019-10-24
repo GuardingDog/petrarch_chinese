@@ -42,7 +42,10 @@ def get_actor_text(meta_strg):
 
 def get_sub_str(original_str, tag, start_pos):
     count = 0
-    beg = original_str.find(tag, start_pos) - 1
+    if tag.startswith("("):
+        beg = original_str.find(tag, start_pos)
+    else:
+        beg = original_str.find(tag, start_pos) - 1
     end = 0
     for index, char in enumerate(original_str[beg:]):
         if char == '(':
@@ -60,20 +63,25 @@ def extract_location(tree_str):
     flag1_end = 0
     location_list = []
     while flag1_end < len(tree_str):
-        flag1_beg, flag1_end, str1 = get_sub_str(tree_str, 'PP', flag1_beg)
-        if flag1_beg == -2:
+        flag1_beg, flag1_end, str1 = get_sub_str(tree_str, '(PP', flag1_beg)
+
+        if flag1_beg == -1:
             break
         flag2_end = 0
-        _, _, prep = get_sub_str(str1, 'P', 4)
-        prep = prep.split(' ')[1]
-        if prep in ['在', '于', '至', '到']:
-            while flag2_end < len(str1):
-                flag2_beg, flag2_end, str2 = get_sub_str(str1, 'NR', flag2_end)
-                if flag2_beg == -2:
-                    break
-                location_list.append(str2.split(' ')[1])
+#TODO(GuardingDog) : Multilayer preposition labels are not considered ，Need to change to iteration
+        if not str1.find("(P",4) == -1:
+            _, _, prep = get_sub_str(str1, '(P', 4)
+            prep = prep.split(' ')[1]
+            if prep in ['在', '于', '至', '到']:
+                while flag2_end < len(str1):
+                    flag2_beg, flag2_end, str2 = get_sub_str(str1, 'NR', flag2_end)
+                    if flag2_beg == -2:
+                        break
+                    location_list.append(str2.split(' ')[1])
 
-        flag1_beg += 4
+            flag1_beg += 4
+        else:
+            flag1_beg += 4
     return location_list
 
 
