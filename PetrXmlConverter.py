@@ -150,7 +150,10 @@ class PetrXmlConverter:
 
                     # <ner> element
                     xml_ner = xml_doc.createElement("Ner")
-                    ner_text = xml_doc.createTextNode('\n' + "".join(sent[Attr.ner]) + '\n')
+                    if sent[Attr.ner]:
+                        ner_text = xml_doc.createTextNode('\n' + "".join(sent[Attr.ner]) + '\n')
+                    else:
+                        ner_text = xml_doc.createTextNode('\nNER未提取出地点\n')
                     xml_ner.appendChild(ner_text)
 
                     # <Sentence> element

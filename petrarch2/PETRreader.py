@@ -57,7 +57,7 @@ except ImportError:
 import PETRglobals
 import utilities
 import json
-
+import PETRwriter
 
 # ================== STRINGS ================== #
 
@@ -2178,6 +2178,9 @@ def read_xml_input(filepaths, parsed=False):
                     parsed_content = utilities._format_parsed_str(
                         parsed_content)
 
+                    # extract location by the following method(need debugging)
+                    LOCATION = PETRwriter.extract_location(parsed_content)
+                    print(LOCATION)
 
 
 
@@ -2193,8 +2196,16 @@ def read_xml_input(filepaths, parsed=False):
                     entry_id, sent_id = story.attrib['id'].split('_')
 
                     text = story.find('Text').text
+                    location_text = story.find('Ner').text
+                    location_text = location_text.replace('\n', '')
+                    location = location_text.split(" ")
+
+                    # for loc in LOCATION:
+                    #     if loc not in location:
+                    #         LOCATION.remove(loc)
+
                     text = text.replace('\n', ' ').replace('  ', ' ')
-                    sent_dict = {'content': text, 'parsed': parsed_content}
+                    sent_dict = {'content': text, 'parsed': parsed_content, 'ner':location}
                     meta_content = {'date': story.attrib['date'],
                                     'source': story.attrib['source']}
                     content_dict = {'sents': {sent_id: sent_dict},

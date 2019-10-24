@@ -53,13 +53,13 @@ class FromCorenlpConverter(PetrXmlConverter):
 
 
     def ner(self , text):
-        #return self.nlp.ner(text)
         ner_entities = self.nlp.ner(text)
-        locations = ""
-        for index , entity in enumerate(ner_entities):
-            if 'STATE_OR_PROVINCE' == entity[1]:
-                locations +=entity[0]
-        return locations
+        locations = []
+        local_lable = ["STATE_OR_PROVINCE", "COUNTRY", "CITY", "LOCATION", "FACILITY"]
+        for entity in ner_entities:
+            if entity[1] in local_lable:
+                locations.append(entity[0])
+        return " ".join(locations)
 
 
 
