@@ -71,6 +71,7 @@ def extract_location(tree_str):
 #TODO(GuardingDog) : Multilayer preposition labels are not considered ，Need to change to iteration
         if not str1.find("(P",4) == -1:
             _, _, prep = get_sub_str(str1, '(P', 4)
+
             prep = prep.split(' ')[1]
             if prep in ['在', '于', '至', '到']:
                 while flag2_end < len(str1):
@@ -103,6 +104,10 @@ def write_events_demo(sent, events, meta, output_file):
         # f.write(str(meta) + '\n\n')
 
         f.close()
+
+def ner_to_string(ner):
+    str = ",".join(ner)
+    return str.encode("utf-8")
 
 
 def write_events(event_dict, output_file):
@@ -147,6 +152,8 @@ def write_events(event_dict, output_file):
             url = story_dict['meta']['url']
         else:
             url = ''
+
+        StoryNer = ner_to_string(story_dict['meta']['ner'])
 
         event_temp = []
         event_str_temp = []
@@ -251,6 +258,24 @@ def write_events(event_dict, output_file):
                         filtered_events[event]['eventroot'])
                 else:
                     event_str += '\teventroot\t---\n'
+            if PETRglobals.WriteNer:
+                event_str += '\tlocation1\t{}\n'.format(StoryNer)
+
+            # if not story_dict[key]['sents'] == 'NER未提取出地点':
+            #     event_str += '\tlocation(NER)\t'
+
+    # extract location by the following method(need debugging)
+            try:
+                LOCATION = extract_location(event_str)
+                if len(LOCATION)>0:
+                    event_str += '\tlocation2\t{}\n'.format(
+                        LOCATION
+                    )
+                else:
+                    event_str +='\tlocation2\t---\n'
+            except IndexError:
+                print("'extract_location' method can not parse this tree :" +event_str)
+                raise
 
             event_str_temp.append(event_str)
             event_temp.append(event)
