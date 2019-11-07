@@ -334,11 +334,7 @@ def do_coding(event_dict):
                                 #             or SentenceText.find(loc, index1, index3)):
                                 #         realLocation.append(loc)
                                 # event_dict[key]['sents'][sent]['ner'] = realLocation
-                                print("原句是：")
-                                print(event_dict[key]['sents'][sent]['content'])
-                                print("提出的地点是：")
-                                for loc in event_dict[key]['sents'][sent]['ner']:
-                                    print(",".join(loc).encode("utf-8"))
+
                                 if evt in text_dict:  # 16.04.30 pas bypasses problems with expansion of compounds
                                     event_dict[key]['sents'][sent]['meta'][
                                         'actortext'][evt] = text_dict[evt][:2]

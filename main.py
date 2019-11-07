@@ -93,7 +93,7 @@ if __name__ == "__main__":
     if not gcp.corenlp_path == "":
         corenlp_path = gcp.corenlp_path
 
-    for fileNum in range(6,100,1) :
+    for fileNum in range(6,7,1) :
         if not gcp.port == -1:  # 自选端口情况
             port = gcp.port
             kill_process(port)
@@ -104,7 +104,7 @@ if __name__ == "__main__":
             port = get_free_port()
             print("程序将在" + str(port) + "号端口启动")
         formatted_lines = []
-        with open(input_path+input_name+str(fileNum) + '.txt', 'r') as fp:
+        with open(input_path+input_name, 'r') as fp:
             lines = fp.readlines()
             for index, line in enumerate(lines):
                 elements = line.split("\t")

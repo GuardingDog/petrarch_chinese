@@ -7,7 +7,7 @@ xml_file_name=""
 
 output_path = ""
 output_name = ""
-merge_event = True
+merge_event = False
 corenlp_path = ""
 corenlp_parse = False
 
