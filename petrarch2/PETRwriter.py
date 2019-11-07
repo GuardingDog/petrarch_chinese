@@ -204,7 +204,6 @@ def get_event_str(events_dict):
         else:
             event_str = '\t'.join(event["origin"])
 
-
         if "joined_issues" in event:
             event_str += '\n\tjoined_issues\t{}\n'.format(event["joined_issues"])
         else:
@@ -235,6 +234,14 @@ def get_event_str(events_dict):
                     event['Target'])
             else:
                 event_str += '\tTarget\t---\n'
+
+        if PETRglobals.WriteActorText:
+            if 'actortext' in event:
+                event_str += '\tactortext\t{}\t{}\n'.format(
+                    event['actortext'][0],
+                    event['actortext'][1])
+            else:
+                event_str += '\tactortext\t---\t---\n'
 
         if PETRglobals.WriteEventText:
             if 'eventtext' in event:
@@ -398,6 +405,9 @@ def write_events(event_dict, output_file, flag = True):
 
             if 'Target' in filtered_events[event]:
                 temp_event_dict.update({"Target": filtered_events[event]['Target']})
+
+            if 'actortext' in filtered_events[event]:
+                temp_event_dict.update({"actortext" : filtered_events[event]["actortext"]} )
 
             if 'eventtext' in filtered_events[event]:
                 temp_event_dict.update({"eventtext": filtered_events[event]['eventtext']})
