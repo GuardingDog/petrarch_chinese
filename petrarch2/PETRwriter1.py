@@ -71,6 +71,7 @@ def extract_location(tree_str):
 #TODO(GuardingDog) : Multilayer preposition labels are not considered ，Need to change to iteration
         if not str1.find("(P",4) == -1:
             _, _, prep = get_sub_str(str1, '(P', 4)
+
             prep = prep.split(' ')[1]
             if prep in ['在', '于', '至', '到']:
                 while flag2_end < len(str1):
@@ -95,7 +96,7 @@ def write_events_demo(sent, events, meta, output_file):
         locations = extract_location(sent.treestr)
         if len(locations) > 0:
             f.write(str(json.dumps(locations, ensure_ascii=False, encoding='utf-8')) + '\n')
-
+        print('events:', events)
         for index, event in enumerate(events[0]):
             if events[0][index][2] == 0 and gcp.output_zero_flag == '0':
                 continue
@@ -103,6 +104,10 @@ def write_events_demo(sent, events, meta, output_file):
         # f.write(str(meta) + '\n\n')
 
         f.close()
+
+def ner_to_string(ner):
+    str = ",".join(ner)
+    return str.encode("utf-8")
 
 
 def check_same_event(code1, code2):
@@ -180,17 +185,11 @@ def modify_event(event_temp, i, index, content, ids, pre_ids):
 
     event_temp.insert(i, pre)
 
-def ner_to_string(ner):
-    str = ",".join(ner)
-    return str.encode("utf-8")
-
 
 def get_event_str(events_dict):
     global StorySource
     global NEvents
     global StoryIssues
-    global StoryNer
-    global StoryNer2
 
     strs = []
     for event in events_dict:
@@ -203,7 +202,7 @@ def get_event_str(events_dict):
                 event["origin"][:3]) + '\t010\t' + '\t'.join(event["origin"][4:])
         else:
             event_str = '\t'.join(event["origin"])
-
+        print(event_str)
 
         if "joined_issues" in event:
             event_str += '\n\tjoined_issues\t{}\n'.format(event["joined_issues"])
@@ -258,45 +257,28 @@ def get_event_str(events_dict):
             else:
                 event_str += '\teventroot\t---\n'
 
-        if PETRglobals.WriteNer:
-            event_str += '\tlocation1\t{}\n'.format(StoryNer)
-            if(StoryNer2):
-                location2_str = ",".join(StoryNer2)
-            else:
-                location2_str = "未提取出地点"
-            event_str += '\tlocation2\t{}\n'.format(location2_str)
-
         strs.append(event_str)
-
     return strs
-
-
-def get_loction(story_dict):
-    sents = story_dict["sents"]
-    locations = []
-    for sent in sents:
-        sent_tree = sents[sent]["parsed"]
-        sent_locations = extract_location(sent_tree)
-        locations+= sent_locations
-    return locations
 
 
 def write_events(event_dict, output_file, flag = True):
     """
     Formats and writes the coded event data to a file in a standard
     event-data format.
+
     Parameters
     ----------
+
     event_dict: Dictionary.
                 The main event-holding dictionary within PETRARCH.
+
+
     output_file: String.
                     Filepath to which events should be written.
     """
     global StorySource
     global NEvents
     global StoryIssues
-    global StoryNer
-    global StoryNer2
 
     event_output = []
     # 测试用
@@ -323,10 +305,15 @@ def write_events(event_dict, output_file, flag = True):
             url = story_dict['meta']['url']
         else:
             url = ''
+
+<<<<<<< HEAD
         StoryNer = ner_to_string(story_dict['meta']['ner'])
-        # extract_location
-        StoryNer2 = get_loction(story_dict)
+
+        event_temp = []
+        event_str_temp = []
+=======
         # event is tuple
+>>>>>>> e8e69005e3a339610a77d4aeabfa1385cdd71044
         for event in filtered_events:
             temp_event_dict = {}
             skip_flag = False
@@ -393,8 +380,56 @@ def write_events(event_dict, output_file, flag = True):
             if 'content' in filtered_events[event]:
                 temp_event_dict.update({"content": filtered_events[event]['content']})
 
+<<<<<<< HEAD
+            if PETRglobals.WriteActorText:
+                if 'actortext' in filtered_events[event]:
+                    event_str += '\tactortext\t{}\t{}\n'.format(
+                        filtered_events[event]['actortext'][0],
+                        filtered_events[event]['actortext'][1])
+                else:
+                    event_str += '\tactortext\t---\t---\n'
+            if PETRglobals.WriteEventText:
+                if 'eventtext' in filtered_events[event]:
+                    event_str += '\teventtext\t{}\n'.format(
+                        filtered_events[event]['eventtext'])
+                else:
+                    event_str += '\teventtext\t---\n'
+            # if True:
+            if PETRglobals.WriteActorRoot:
+                if 'actorroot' in filtered_events[event]:
+                    event_str += '\tactorroot\t{}\t{}\n'.format(
+                        filtered_events[event]['actorroot'][0],
+                        filtered_events[event]['actorroot'][1])
+                else:
+                    event_str += '\tactorroot\t---\t---\n'
+            if PETRglobals.WriteEventRoot:
+                if 'eventroot' in filtered_events[event]:
+                    event_str += '\teventroot\t{}\n'.format(
+                        filtered_events[event]['eventroot'])
+                else:
+                    event_str += '\teventroot\t---\n'
+            if PETRglobals.WriteNer:
+                event_str += '\tlocation1\t{}\n'.format(StoryNer)
+
+            # if not story_dict[key]['sents'] == 'NER未提取出地点':
+            #     event_str += '\tlocation(NER)\t'
+
+    # extract location by the following method(need debugging)
+            try:
+                LOCATION = extract_location(event_str)
+                if len(LOCATION)>0:
+                    event_str += '\tlocation2\t{}\n'.format(
+                        LOCATION
+                    )
+                else:
+                    event_str +='\tlocation2\t---\n'
+            except IndexError:
+                print("'extract_location' method can not parse this tree :" +event_str)
+                raise
+=======
             if 'Source' in filtered_events[event]:
                 temp_event_dict.update({"Source": filtered_events[event]['Source']})
+>>>>>>> e8e69005e3a339610a77d4aeabfa1385cdd71044
 
             if 'Target' in filtered_events[event]:
                 temp_event_dict.update({"Target": filtered_events[event]['Target']})
@@ -436,10 +471,14 @@ def write_events(event_dict, output_file, flag = True):
 def write_nullverbs(event_dict, output_file):
     """
     Formats and writes the null verb data to a file as a set of lines in a JSON format.
+
     Parameters
     ----------
+
     event_dict: Dictionary.
                 The main event-holding dictionary within PETRARCH.
+
+
     output_file: String.
                     Filepath to which events should be written.
     """
@@ -498,10 +537,14 @@ def write_nullverbs(event_dict, output_file):
 def write_nullactors(event_dict, output_file):
     """
     Formats and writes the null actor data to a file as a set of lines in a JSON format.
+
     Parameters
     ----------
+
     event_dict: Dictionary.
                 The main event-holding dictionary within PETRARCH.
+
+
     output_file: String.
                     Filepath to which events should be written.
     """
@@ -558,12 +601,17 @@ def write_nullactors(event_dict, output_file):
 def pipe_output(event_dict):
     """
     Format the coded event data for use in the processing pipeline.
+
     Parameters
     ----------
+
     event_dict: Dictionary.
                 The main event-holding dictionary within PETRARCH.
+
+
     Returns
     -------
+
     final_out: Dictionary.
                 StoryIDs as the keys and a list of coded event tuples as the
                 values, i.e., {StoryID: [(full_record), (full_record)]}. The
@@ -572,6 +620,7 @@ def pipe_output(event_dict):
                 StorySource) with the ``joined_issues`` field being optional.
                 The issues are joined in the format of ISSUE,COUNT;ISSUE,COUNT.
                 The IDs are joined as ID;ID;ID.
+
     """
     final_out = {}
     for key in event_dict:

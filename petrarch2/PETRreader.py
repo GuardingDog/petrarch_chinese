@@ -1757,6 +1757,7 @@ def dstr_to_ordate(datestring):
             day = int(datestring[4:6])
     except ValueError:
         raise DateError
+
 # print year, month, day    # debug
 
     if day <= 0:
@@ -2178,21 +2179,6 @@ def read_xml_input(filepaths, parsed=False):
                     parsed_content = utilities._format_parsed_str(
                         parsed_content)
 
-                    # extract location by the following method(need debugging)
-                    try:
-                        LOCATION = PETRwriter.extract_location(parsed_content)
-                    except IndexError:
-                        print("'extract_location' method can not parse this tree :" +parsed_content)
-                        raise
-
-
-
-                    #print(LOCATION)
-
-
-
-                    #print("parsed_content:",parsed_content)
-
 
 
                 else:
@@ -2212,9 +2198,10 @@ def read_xml_input(filepaths, parsed=False):
                     #         LOCATION.remove(loc)
 
                     text = text.replace('\n', ' ').replace('  ', ' ')
-                    sent_dict = {'content': text, 'parsed': parsed_content, 'ner':location}
+                    sent_dict = {'content': text, 'parsed': parsed_content}
                     meta_content = {'date': story.attrib['date'],
-                                    'source': story.attrib['source']}
+                                    'source': story.attrib['source'],
+                                    'ner': location}
                     content_dict = {'sents': {sent_id: sent_dict},
                                     'meta': meta_content}
 
