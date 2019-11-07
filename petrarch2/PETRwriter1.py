@@ -110,7 +110,158 @@ def ner_to_string(ner):
     return str.encode("utf-8")
 
 
-def write_events(event_dict, output_file):
+def check_same_event(code1, code2):
+    root1 = code1[0:3]
+    root2 = code2[0:3]
+    # flag: 0->not same
+    #       1->same event and code1, code2 are both root event
+    #       2->same event, code1 is root event and code2 is detail event
+    #       3->same event, code1 is detail event and code1 is root event
+    #       4->same event, code1 and code2 are both detail event
+    if root1 == root2:
+        if code1 == root1 and code2 == root2:
+            return 1
+        elif code1 == root1 and code2 != root2:
+            return 2
+        elif code1 != root1 and code2 == root2:
+            return 3
+        else:
+            return 4
+    else:
+        return 0
+
+
+def check_miss_component(event):
+    source = event[1]
+    target = event[2]
+    # 0: miss source and target
+    # 1: miss source
+    # 2: miss target
+    # 3: miss nothing
+    if source == "---" and target == "---":
+        return 0
+    elif source == "---" and target != "---":
+        return 1
+    elif source != "---" and target == "---":
+        return 2
+    else:
+        return 3
+
+
+def check_successive_sent(ids1, ids2):
+    # 目前是段落级合并，未要求句子相邻，因此直接返回True
+    return True
+
+    sent_ids1 = get_id(ids1)
+    sent_ids2 = get_id(ids2)
+    for id1 in sent_ids1:
+        for id2 in sent_ids2:
+            if abs(id1 - id2) <=1:
+                return True
+    return False
+
+
+def get_id(ids):
+    sent_ids = []
+    for id in ids:
+        id_utf = id.encode("utf-8").split("-")[1].split("_")[1]
+        id_int = int(id_utf)
+        sent_ids.append(id_int)
+    return sent_ids
+
+
+# modify event_temp
+def modify_event(event_temp, i, index, content, ids, pre_ids):
+    pre = event_temp[i]
+    event_temp.remove(pre)
+
+    tuple_event = pre["origin"]
+    list_event = list(tuple_event)
+    list_event[index] = content
+    pre.update({"origin": tuple(list_event)})
+
+    new_ids = ids + pre_ids
+    pre.update({"ids": new_ids})
+
+    event_temp.insert(i, pre)
+
+
+def get_event_str(events_dict):
+    global StorySource
+    global NEvents
+    global StoryIssues
+
+    strs = []
+    for event in events_dict:
+        ids = ';'.join(event['ids'])
+
+        # 15.04.30: a very crude hack around an error involving multi-word
+        # verbs
+        if not isinstance(event["origin"][3], basestring):
+            event_str = '\t'.join(
+                event["origin"][:3]) + '\t010\t' + '\t'.join(event["origin"][4:])
+        else:
+            event_str = '\t'.join(event["origin"])
+        print(event_str)
+
+        if "joined_issues" in event:
+            event_str += '\n\tjoined_issues\t{}\n'.format(event["joined_issues"])
+        else:
+            event_str += '\n\tjoined_issues\tnull\n'
+
+        if "url" in event:
+            event_str += '\tids\t{}\n\turl\t{}\n\tStorySource\t{}\n'.format(ids, event["url"], StorySource)
+        else:
+            event_str += '\tids\t{}\n\tStorySource\t{}\n'.format(ids, StorySource)
+
+        if PETRglobals.WriteContent:
+            if 'content' in event:
+                event_str += '\tcontent\t{}\n'.format(
+                    event['content'])
+            else:
+                event_str += '\tcontent\t---\n'
+
+        if PETRglobals.WriteSource:
+            if 'Source' in event:
+                event_str += '\tSource\t{}\n'.format(
+                    event['Source'])
+            else:
+                event_str += '\tSource\t---\n'
+
+        if PETRglobals.WriteTarget:
+            if 'Target' in event:
+                event_str += '\tTarget\t{}\n'.format(
+                    event['Target'])
+            else:
+                event_str += '\tTarget\t---\n'
+
+        if PETRglobals.WriteEventText:
+            if 'eventtext' in event:
+                event_str += '\teventtext\t{}\n'.format(
+                    event['eventtext'])
+            else:
+                event_str += '\teventtext\t---\n'
+        # if True:
+        if PETRglobals.WriteActorRoot:
+            if 'actorroot' in event:
+                event_str += '\tactorroot\t{}\t{}\n'.format(
+                    event['actorroot'][0],
+                    event['actorroot'][1])
+            else:
+                event_str += '\tactorroot\t---\t---\n'
+
+        if PETRglobals.WriteEventRoot:
+            if 'eventroot' in event:
+                event_str += '\teventroot\t{}\n'.format(
+                    event['eventroot'])
+            else:
+                event_str += '\teventroot\t---\n'
+
+        strs.append(event_str)
+    return strs
+
+
+def write_events(event_dict, output_file, flag = True):
     """
     Formats and writes the coded event data to a file in a standard
     event-data format.
@@ -141,7 +292,9 @@ def write_events(event_dict, output_file):
         if not story_dict['sents']:
             continue    # skip cases eliminated by story-level discard
 #        print('WE1',story_dict)
-        story_output = []
+        story_output = [] # event_str in one story
+        event_temp = [] # event_origin in one story
+
         filtered_events = utilities.story_filter(story_dict, key)
 #        print('WE2',filtered_events)
         if 'source' in story_dict['meta']:
@@ -153,84 +306,81 @@ def write_events(event_dict, output_file):
         else:
             url = ''
 
+<<<<<<< HEAD
         StoryNer = ner_to_string(story_dict['meta']['ner'])
 
         event_temp = []
         event_str_temp = []
+=======
+        # event is tuple
+>>>>>>> e8e69005e3a339610a77d4aeabfa1385cdd71044
         for event in filtered_events:
+            temp_event_dict = {}
+            skip_flag = False
             story_date = event[0]
             source = event[1]
             target = event[2]
             code = filter(lambda a: not a == '\n', event[3])
-            skip_flag = False
+            ids = filtered_events[event]["ids"]
+
+            temp_event_dict.update({"origin": event})
+            temp_event_dict.update({"ids": ids})
 
             if flag:
-                n_code = int(code)
-                for pre_event in event_temp:
+                for i, pre_dict in enumerate(event_temp):
+                    pre_event = pre_dict["origin"]
+                    pre_code = filter(lambda a: not a == '\n', pre_event[3])
+                    pre_ids = pre_dict["ids"]
+                    same_code = check_same_event(code, pre_code)
+                    if same_code == 0:
+                        continue
+
+                    # 补充成分
+                    if check_successive_sent(ids, pre_ids):
+                        supplementary = True
+                        miss1 = check_miss_component(event)
+                        miss2 = check_miss_component(pre_event)
+                        if miss2 == 3:
+                            pass
+                        elif miss1 == 1 and miss2 == 2:
+                            modify_event(event_temp, i, 2, target, ids, pre_ids)
+                        elif miss1 == 2 and miss2 == 1:
+                            modify_event(event_temp, i, 1, source, ids, pre_ids)
+                        else:
+                            supplementary = False
+                        if supplementary:
+                            # cur_event is more detailed
+                            if same_code == 3:
+                                modify_event(event_temp, i, 3, code, ids, pre_ids)
+                            skip_flag = True
+                            break
+
+                    # 合并事件
                     if story_date == pre_event[0] and source == pre_event[1] and target == pre_event[2]:
-                        pre_code = int(filter(lambda a: not a == '\n', pre_event[3]))
-                        if n_code/10 == pre_code/10:
-                            if n_code % 10 <= pre_code %10:
-                                skip_flag = True
-                                break
-                            else:
-                                index = event_temp.index(pre_event)
-                                del event_temp[index]
-                                del event_str_temp[index]
-                                break
+                        if same_code == 2 or same_code == 3:
+                            skip_flag = True
+                            # cur_event is more detailed
+                            if same_code == 3:
+                                modify_event(event_temp, i, 3, code, ids, pre_ids)
+                            break
+
             if skip_flag:
                 continue
 
-            ids = ';'.join(filtered_events[event]['ids'])
-   
             if 'issues' in filtered_events[event]:
                 iss = filtered_events[event]['issues']
                 issues = ['{},{}'.format(k, v) for k, v in iss.items()]
                 joined_issues = ';'.join(issues)
-            else:
-                joined_issues = []
+                temp_event_dict.update({"joined_issues": joined_issues})
 
-            print('Event: {}\t{}\t{}\t{}\t{}\t{}'.format(story_date, source,
-                                                         target, code, ids,
-                                                         StorySource))
-#            event_str = '{}\t{}\t{}\t{}'.format(story_date,source,target,code)
-            # 15.04.30: a very crude hack around an error involving multi-word
-            # verbs
-            if not isinstance(event[3], basestring):
-                event_str = '\t'.join(
-                    event[:3]) + '\t010\t' + '\t'.join(event[4:])
-            else:
-                event_str = '\t'.join(event)
-            # print(event_str)
-            if joined_issues:
-                event_str += '\n\tjoined_issues\t{}\n'.format(joined_issues)
-            else:
-                event_str += '\n\tjoined_issues\tnull\n'
 
             if url:
-                event_str += '\tids\t{}\n\turl\t{}\n\tStorySource\t{}\n'.format(ids, url, StorySource)
-            else:
-                event_str += '\tids\t{}\n\tStorySource\t{}\n'.format(ids, StorySource)
-            if PETRglobals.WriteContent:
-                if 'content' in filtered_events[event]:
-                    event_str += '\tcontent\t{}\n'.format(
-                        filtered_events[event]['content'])
-                else:
-                    event_str += '\tcontent\t---\n'
-            if PETRglobals.WriteSource:
-                if 'Source' in filtered_events[event]:
-                    event_str += '\tSource\t{}\n'.format(
-                        filtered_events[event]['Source'])
-                else:
-                    event_str += '\tSource\t---\n'
+                temp_event_dict.update({"url": url})
 
-            if PETRglobals.WriteTarget:
-                if 'Target' in filtered_events[event]:
-                    event_str += '\tTarget\t{}\n'.format(
-                        filtered_events[event]['Target'])
-                else:
-                    event_str += '\tTarget\t---\n'
+            if 'content' in filtered_events[event]:
+                temp_event_dict.update({"content": filtered_events[event]['content']})
 
+<<<<<<< HEAD
             if PETRglobals.WriteActorText:
                 if 'actortext' in filtered_events[event]:
                     event_str += '\tactortext\t{}\t{}\n'.format(
@@ -276,11 +426,27 @@ def write_events(event_dict, output_file):
             except IndexError:
                 print("'extract_location' method can not parse this tree :" +event_str)
                 raise
+=======
+            if 'Source' in filtered_events[event]:
+                temp_event_dict.update({"Source": filtered_events[event]['Source']})
+>>>>>>> e8e69005e3a339610a77d4aeabfa1385cdd71044
 
-            event_str_temp.append(event_str)
-            event_temp.append(event)
+            if 'Target' in filtered_events[event]:
+                temp_event_dict.update({"Target": filtered_events[event]['Target']})
 
-        story_output += event_str_temp
+            if 'eventtext' in filtered_events[event]:
+                temp_event_dict.update({"eventtext": filtered_events[event]['eventtext']})
+                # if True:
+
+            if 'actorroot' in filtered_events[event]:
+                temp_event_dict.update({"actorroot": filtered_events[event]['actorroot']})
+
+            if 'eventroot' in filtered_events[event]:
+                temp_event_dict.update({"eventroot": filtered_events[event]['eventroot']})
+
+            event_temp.append(temp_event_dict)
+
+        event_output += get_event_str(event_temp)
         story_events = '\n'.join(story_output)
         event_output.append(story_events)
 
@@ -288,12 +454,18 @@ def write_events(event_dict, output_file):
     event_output = [event for event in event_output if event]
 
     if output_file:
-        f = codecs.open(output_file, encoding='utf-8', mode='a')
-        for str in event_output:
-            #             field = str.split('\t')  # debugging
-            #            f.write(field[5] + '\n')
-            f.write(str + '\n')
-        f.close()
+        if flag:
+            f = codecs.open(output_file, encoding='utf-8', mode='a')
+            for str in event_output:
+                #             field = str.split('\t')  # debugging
+                #            f.write(field[5] + '\n')
+                f.write(str + '\n')
+            f.close()
+        else:
+            with open("evets.result_before_merge.txt", 'a') as f:
+                for str in event_output:
+                    f.write(str + '\n')
+
 
 
 def write_nullverbs(event_dict, output_file):
