@@ -1841,8 +1841,11 @@ class Sentence:
             store = metadict[id(next)]
             meta_total.append(store)
             next = store[0]
-        if (meta_total[-2][0][-1][:3] != meta_total[-2][2][-1][:3]):
-            del meta_total[-2]
+        length = len(meta_total)
+        while (length > 0):
+            if (meta_total[length - 1][2][1][:3] != entry[2][:3]):
+                del meta_total[length - 1]
+            length = length - 1
         return map(lambda a: a[-2] if len(a) > 1 else a[0], meta_total[::-1])
 
     def return_events(self):
@@ -1918,10 +1921,15 @@ class Sentence:
                             for source in event[0]:
                                 valid.append(
                                     (source.replace('~', '---'), "---", code))
+                                meta[(source.replace(
+                                    '~', '---'), "---", code)] = self.get_metadata(event)
+
 
                         elif (not require_dyad) and event[1] and code and not event[0]:
                             valid.append(
                                 ("---", event[1].replace('~', '---'), code))
+                            meta[(source.replace(
+                                '~', '---'), event[1].replace('~', '---'), code)] = self.get_metadata(event)
 
                         # If there are multiple actors in a cooperation
                         # scenario, code their cooperation as well
