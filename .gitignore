@@ -126,3 +126,10 @@ dmypy.json
 
 #stanford-core
 /stanford*/
+#idea file
+.idea
+#input
+
+/ev*.txt
+input/inputfiles/
+/input/*
