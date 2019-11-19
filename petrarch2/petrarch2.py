@@ -641,7 +641,12 @@ def run(filepaths, out_file, s_parsed):
         events = utilities.stanford_parse(events)
 
     #print("events_input:",events)
-    if getNullActor==True:
+    flag=False
+    import globalConfigPara as gcp
+    if not gcp.getNullActor=='':
+        flag=gcp.getNullActor
+
+    if flag==True:
         get_nullactor(events)
 
     else:

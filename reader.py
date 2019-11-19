@@ -55,6 +55,7 @@ def parse_Config():
         gcp.output_name = parser.get('Options' , 'output_name')
         gcp.corenlp_path = parser.get('StanfordNLP' , 'stanford_dir')
         gcp.corenlp_parse = get_config_boolean('corenlp_parse')
+        gcp.getNullActor=get_config_boolean("getNullActor")
         gcp.format_text = parser.get('Options' , 'format_text')
         gcp.neg_dic_path = parser.get('Options' , 'neg_dic_path')
         gcp.prep_dic_path = parser.get('Options', 'prep_dic_path')
