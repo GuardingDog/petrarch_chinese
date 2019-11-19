@@ -58,11 +58,14 @@ import PETRtree
 
 
 # ========================== VALIDATION FUNCTIONS ========================== #
+from globalConfigPara import getNullActor
+
 
 def get_version():
     return "1.2.0"
 
 
+actors=dict()
 # ========================== OUTPUT/ANALYSIS FUNCTIONS ========================== #
 
 def open_tex(filename):
@@ -179,6 +182,73 @@ def get_issues(SentenceText):
             index += 1
     return issues
 
+
+def get_nullactor(event_dict):
+    count=0
+    for key, val in sorted(event_dict.items()):
+        for sent in val['sents']:
+            parsed = event_dict[key]['sents'][sent]['parsed']
+            treestr = parsed
+            getActor(treestr)
+            count+=1
+            print(count)
+    write_file()
+    return event_dict
+
+
+def getNR(tree):
+    while tree.find("NR") != -1:
+        startPos = tree.find("NR") + 3
+        tree = tree[startPos:]
+        endPos = tree.find(" ")
+        Name = tree[:endPos]
+        if not PETRglobals.ActorDict.has_key(Name):
+            add_to_actor(Name)
+
+
+
+def add_to_actor(name):
+    if name in actors.keys():
+        actors[name] +=1
+    else:
+        actors[name] = 1
+
+
+def write_file():
+    array=sorted(actors.items(), key = lambda kv:(kv[1], kv[0]))
+    array.reverse()
+    fo = open("nullActor.txt", "w")
+    # for name in actors.keys():
+    #     fo.write(name + " "+str(actors[name])+"\n")
+    for(name,num) in array:
+        fo.write(name +" "+str(num)+ "\n")
+    fo.close()
+
+def getActor(tree):
+    npPos = tree.find("IP") + 2
+    tree = tree[npPos:]
+    left_br = 0
+    first_NP = -1
+    i = 0
+
+    def getName(i):
+        start = i + 1
+        while tree[i] != ' ':
+            i += 1
+        return tree[start:i]
+
+    while i < len(tree):
+        if tree[i] == '(':
+            left_br += 1
+            if getName(i) == "NP" and left_br == 1:
+                first_NP = i
+        else:
+            if tree[i] == ')':
+                left_br -= 1
+                if first_NP > 0 and left_br == 0:  ## 找到NP -String
+                    break
+        i += 1
+    getNR(tree[first_NP:i])
 
 def do_coding(event_dict):
     """
@@ -571,17 +641,25 @@ def run(filepaths, out_file, s_parsed):
         events = utilities.stanford_parse(events)
 
     #print("events_input:",events)
-
-    updated_events = do_coding(events)
-    print("update_event:")
-#    print(json.dumps(updated_events, ensure_ascii=False, encoding='utf-8'))
+    flag=False
     import globalConfigPara as gcp
-    if PETRglobals.NullVerbs:
-        PETRwriter.write_nullverbs(updated_events, 'nullverbs.' + out_file)
-    elif PETRglobals.NullActors:
-        PETRwriter.write_nullactors(updated_events, 'nullactors.txt')
+    if not gcp.getNullActor=='':
+        flag=gcp.getNullActor
+
+    if flag==True:
+        get_nullactor(events)
+
     else:
-        PETRwriter.write_events(updated_events, out_file)
+        updated_events = do_coding(events)
+        print("update_event:")
+        #print(json.dumps(updated_events, ensure_ascii=False, encoding='utf-8'))
+        import globalConfigPara as gcp
+        if PETRglobals.NullVerbs:
+            PETRwriter.write_nullverbs(updated_events, 'nullverbs.' + out_file)
+        elif PETRglobals.NullActors:
+            PETRwriter.write_nullactors(updated_events, 'nullactors.txt')
+        else:
+            PETRwriter.write_events(updated_events, out_file)
 
 
 
