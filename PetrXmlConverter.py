@@ -50,41 +50,15 @@ class PetrXmlConverter:
     def parse(self, text):
         return ''
 
-    # def sep_sentence(self, parse):
-    #     stack = []
-    #     sentences = []
-    #     for i in range(len(parse)):
-    #         if parse[i] == '(':
-    #             stack.append(i)
-    #         elif parse[i] == ')':
-    #             if len(stack) == 3 and parse[stack[-1]+1] != 'P':
-    #                 parse_sent = parse[stack[2]:i + 1]
-    #                 text_sent = re.sub(r'\([A-Z]+\s', '', parse_sent).replace(')', '')
-    #                 sentences.append({
-    #                     Attr.text: re.sub(r'\s', '', text_sent),
-    #                     Attr.parse: parse_sent.replace(' ', '')
-    #                 })
-    #             stack.pop()
-    #     return sentences
 
-    # def sep_sentence(self, content):
-    #     sentences = []
-    #     content = content.replace('\u3000', '').replace('　', '')\
-    #         .replace('。', '。\n') \
-    #         .replace('；', '，\n')\
-    #         .replace('。\n”', '。”\n')\
-    #         .strip(' \n')
-    #     for sent in content.split('\n'):
-    #         sentences.append({
-    #             Attr.text: sent,
-    #             Attr.parse: self.parse(sent)
-    #         })
-    #     return sentences
-
+    # paragraph preprocess
     def format_text(self, content):
         return content.replace('\u3000', '').replace('　', '') \
             .replace('。', '\n') \
             .replace('；', '\n') \
+            .replace(';', '\n') \
+            .replace('?', '\n') \
+            .replace('？', '\n') \
             .replace('。\n”', '”\n') \
             .replace("(","（")\
             .replace(")","）")\
