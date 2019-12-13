@@ -10,6 +10,7 @@ import time
 import logging
 import argparse
 import json
+import timeRecognition.TimeNormalizer
 
 
 # petrarch.py
@@ -250,6 +251,7 @@ def getActor(tree):
         i += 1
     getNR(tree[first_NP:i])
 
+
 def do_coding(event_dict):
     """
     Main coding loop Note that entering any character other than 'Enter' at the
@@ -270,11 +272,6 @@ def do_coding(event_dict):
     times = 0
     sents = 0
 
-    # path = ""
-    # dirs = os.listdir(path)
-    # for file in dirs:
-    #     if file == 'evts.test.txt':
-    #         os.remove(path+file)
 
 
 

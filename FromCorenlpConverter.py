@@ -1,3 +1,4 @@
+#-*- coding: UTF-8 -*-
 import glob
 import logging
 import json
@@ -34,10 +35,14 @@ class FromCorenlpConverter(PetrXmlConverter):
                         Attr.url: properties[9]
                     }
                     contents = []
-                    # paragraph
-                    paragraphs = properties[8].split(" ")
+                    #
+                    # split news content which include "title" "reporttime info" and paragraphs by "　　"
+                    #
+                    #
+                    paragraphs = properties[8].strip("　　").split("　　")
                     for index, p in enumerate(paragraphs):
-                        p = p.strip('\r\n').replace(u'\u3000', u'').replace(u'\xa0', u'')
+                        #"\u3000" and "\xa0" means blank character
+                        p = p.replace(u'\u3000', u'').replace(u'\xa0', u'')
                         if p == "":
                             continue
                         # sentence

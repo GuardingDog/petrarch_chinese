@@ -70,7 +70,6 @@ if __name__ == "__main__":
     reload(sys)
     sys.setdefaultencoding('utf-8')
     env = 0
-    print(os.getcwd())
     reader.parse_Config()
     input_path = input_name = xml_output_path = output_path = output_filename = xml_file_name = format_text = corenlp_path = ""
     port = -1
@@ -94,6 +93,7 @@ if __name__ == "__main__":
         corenlp_path = gcp.corenlp_path
 
     for fileNum in range(6,7,1) :
+
         if not gcp.port == -1:  # 自选端口情况
             port = gcp.port
             kill_process(port)
@@ -117,7 +117,7 @@ if __name__ == "__main__":
             fw.writelines(formatted_lines)
 
         if os.path.exists(output_filename):
-            with open(output_filename, 'a') as fw:
+            with open(output_filename, 'w') as fw:
                 fw.write('the index of inputfiles: ' + str(fileNum) + "\n")
                 print('the index of inputfiles: ' + str(fileNum) + "\n")
                 fw.close()
