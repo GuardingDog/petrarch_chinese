@@ -60,6 +60,7 @@ def parse_Config():
         gcp.neg_dic_path = parser.get('Options' , 'neg_dic_path')
         gcp.prep_dic_path = parser.get('Options', 'prep_dic_path')
         gcp.output_zero_flag = parser.get('Options' , 'output_zero_flag')
+        gcp.merge_event = True if (parser.get('Options', 'merge_event')).lower() == "true" else False
 
         gcp.port = int(parser.get('Options', 'port'))
 

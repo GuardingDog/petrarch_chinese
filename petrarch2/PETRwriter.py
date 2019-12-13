@@ -111,7 +111,7 @@ def check_same_event(code1, code2):
     # flag: 0->not same
     #       1->same event and code1, code2 are both root event
     #       2->same event, code1 is root event and code2 is detail event
-    #       3->same event, code1 is detail event and code1 is root event
+    #       3->same event, code1 is detail event and code2 is root event
     #       4->same event, code1 and code2 are both detail event
     if root1 == root2:
         if code1 == root1 and code2 == root2:
@@ -166,19 +166,20 @@ def get_id(ids):
 
 
 # modify event_temp
-def modify_event(event_temp, i, index, content, ids, pre_ids):
+def modify_event(event_temp, i, index, content, ids, pre_ids , flag = True):
     pre = event_temp[i]
-    event_temp.remove(pre)
+    if flag:
+        event_temp.remove(pre)
 
-    tuple_event = pre["origin"]
-    list_event = list(tuple_event)
-    list_event[index] = content
-    pre.update({"origin": tuple(list_event)})
-
-    new_ids = ids + pre_ids
-    pre.update({"ids": new_ids})
-
-    event_temp.insert(i, pre)
+        tuple_event = pre["origin"]
+        list_event = list(tuple_event)
+        list_event[index] = content
+        pre.update({"origin": tuple(list_event)})
+    if ids not in pre_ids:
+        new_ids = ids + pre_ids
+        pre.update({"ids": new_ids})
+    if flag:
+        event_temp.insert(i, pre)
 
 def ner_to_string(ner):
     str = ",".join(ner)
@@ -357,21 +358,21 @@ def write_events(event_dict, output_file, flag = True):
 
                     # 补充成分
                     if check_successive_sent(ids, pre_ids):
-                        supplementary = True
+                        supplementary = False
                         miss1 = check_miss_component(event)
                         miss2 = check_miss_component(pre_event)
-                        if miss2 == 3:
-                            pass
-                        elif miss1 == 1 and miss2 == 2:
+                        if (miss1 == 1 or miss1 == 3) and (miss2 == 2 or miss2 == 0):
+                            supplementary = True
                             modify_event(event_temp, i, 2, target, ids, pre_ids)
-                        elif miss1 == 2 and miss2 == 1:
+                        if (miss1 == 2 or miss1 == 3) and (miss2 == 1 or miss2 == 0):
+                            supplementary = True
                             modify_event(event_temp, i, 1, source, ids, pre_ids)
-                        else:
-                            supplementary = False
-                        if supplementary:
+                        if supplementary or (miss2 == 3 and miss1 != 3):
                             # cur_event is more detailed
                             if same_code == 3:
                                 modify_event(event_temp, i, 3, code, ids, pre_ids)
+                            else:
+                                modify_event(event_temp, i, None, None, ids, pre_ids, False)
                             skip_flag = True
                             break
 

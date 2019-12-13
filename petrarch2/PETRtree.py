@@ -1875,6 +1875,14 @@ class Sentence:
             print('==',ch.label, ch.get_text())
         for ch in self.tree.children:
             print('--',ch.label, ch.get_text())"""
+
+        import globalConfigPara as gcp
+        flag = False
+        if not gcp.merge_event == "":
+            flag = gcp.merge_event
+        if flag:
+            require_dyad = 0
+
         if PETRglobals.NullVerbs or PETRglobals.NullActors:
             utilities.nulllist = []
         events = map(
@@ -1928,8 +1936,7 @@ class Sentence:
                         elif (not require_dyad) and event[1] and code and not event[0]:
                             valid.append(
                                 ("---", event[1].replace('~', '---'), code))
-                            meta[(source.replace(
-                                '~', '---'), event[1].replace('~', '---'), code)] = self.get_metadata(event)
+                            meta[("---", event[1].replace('~', '---'), code)] = self.get_metadata(event)
 
                         # If there are multiple actors in a cooperation
                         # scenario, code their cooperation as well
