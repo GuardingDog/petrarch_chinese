@@ -9,6 +9,7 @@ import glob
 import time
 import logging
 import argparse
+from globalConfigPara import getNullActor as gna
 import json
 import timeRecognition.TimeNormalizer
 
@@ -638,12 +639,9 @@ def run(filepaths, out_file, s_parsed):
         events = utilities.stanford_parse(events)
 
     #print("events_input:",events)
-    flag=False
-    import globalConfigPara as gcp
-    if not gcp.getNullActor=='':
-        flag=gcp.getNullActor
+    flag = gna
 
-    if flag==True:
+    if flag:
         get_nullactor(events)
 
     else:
