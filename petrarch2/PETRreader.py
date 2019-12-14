@@ -2150,27 +2150,16 @@ def read_xml_input(filepaths, parsed=False):
 
     for path in filepaths:
         tree = ET.iterparse(path)
-
-
         for event, elem in tree:
-            if event == "end" and elem.tag == "Sentence":
+            if elem.tag == "Sentence" and event == "end":
                 story = elem
-
-
-
-
                 print("story:",story)
-
-
-
-
                 # Check to make sure all the proper XML attributes are included
                 attribute_check = [key in story.attrib for key in
                                    ['date', 'id', 'sentence', 'source']]
                 if not attribute_check:
                     print('Need to properly format your XML...')
                     break
-
                 # If the XML contains StanfordNLP parsed data, pull that out
                 # TODO: what to do about parsed content at the story level,
                 # i.e., multiple parsed sentences within the XML entry?
@@ -2178,9 +2167,6 @@ def read_xml_input(filepaths, parsed=False):
                     parsed_content = story.find('Parse').text
                     parsed_content = utilities._format_parsed_str(
                         parsed_content)
-
-
-
                 else:
                     parsed_content = ''
 

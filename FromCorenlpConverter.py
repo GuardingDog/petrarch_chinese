@@ -30,7 +30,7 @@ class FromCorenlpConverter(PetrXmlConverter):
                     properties = line.replace('\n', '').split('|')
                     event = {
                         Attr.id: properties[0],
-                        Attr.date: properties[4].split(' ')[0].replace('-', ''),
+                        Attr.date: properties[4],
                         Attr.source: properties[6],
                         Attr.url: properties[9]
                     }

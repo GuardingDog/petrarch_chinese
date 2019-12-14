@@ -252,6 +252,16 @@ def getActor(tree):
         i += 1
     getNR(tree[first_NP:i])
 
+def get_releasetime(event_dict):
+    releasetimeDic = {}
+    for key, val in sorted(event_dict.items()):
+        releasetime = event_dict[key]['meta']['date']
+        articleId = key.split("-")[0]
+        if  articleId not in releasetimeDic :
+            releasetimeDic[articleId] = releasetime
+        else:
+            continue
+    return releasetimeDic
 
 def do_coding(event_dict):
     """
@@ -273,7 +283,10 @@ def do_coding(event_dict):
     times = 0
     sents = 0
 
+    realiseTimeDic = get_releasetime(event_dict)
 
+    if not realiseTimeDic :
+        print("realiseTimeDic have no timeinfo ,please check “get_releasetime” method")
 
 
     for key, val in sorted(event_dict.items()):
@@ -299,7 +312,7 @@ def do_coding(event_dict):
                 SentenceDate = event_dict[key]['sents'][sent][
                     'date'] if 'date' in event_dict[key]['sents'][sent] else StoryDate
 
-                Date = PETRreader.dstr_to_ordate(SentenceDate)
+                Date = PETRreader.dstr_to_ordate(SentenceDate.split(' ')[0].replace('-', ''))
 
                 print("\n", SentenceID)
 

@@ -70,17 +70,34 @@ class PetrXmlConverter:
             # .replace("，", ",") \
 
 
+
     def sep_sentence(self, article_id, paragraph_id, content):
+
+        def format_id(id):
+            if not "e" == str(id):
+                lenId = len(str(id))
+                if lenId == 1:
+                    return "000" + str(id)
+                elif lenId == 2:
+                    return "00" + str(id)
+                elif lenId == 3:
+                    return "0" + str(id)
+                else:
+                    print("paragraph_id or sentence_id bigger than 999 , please check segementation function")
+                    raise RuntimeError("idError")
+            else:
+                return "e"
+
         sentences = []
         content = self.format_text(content)
         for i, sent in enumerate(content.split('\n')):
-            # id = article_id + "-" + paragraph_id + _ + sentence_id  "50252-e_1"
+            # id = article_id + "-" + paragraph_id + _ + sentence_id  "50252-0001_0001"
             try:
                 sent = sent.strip('\r\n').replace(u'\xa0', u'')
                 if sent == "":
                     continue
                 parse_text = self.parse(sent)
-                sent_id = str(article_id) + "-" + str(paragraph_id) + "_" + str(i)
+                sent_id = str(article_id) + "-" + format_id(paragraph_id) + "_" + format_id(i)
                 print "正在处理:" + sent_id
                 sentences.append({
                     Attr.id: sent_id,
@@ -89,7 +106,7 @@ class PetrXmlConverter:
                     Attr.ner: self.ner(sent)
                 })
             except Exception as e:
-                message = "Error in PetrXmlConverter parse:" + str(article_id) + "\t" + str(paragraph_id) + "\t" + str(
+                message = "Error in PetrXmlConverter parse:" + str(article_id) + "\t" + format_id(paragraph_id) + "\t" + format_id(
                     i)
                 logging.exception(message)
                 continue
