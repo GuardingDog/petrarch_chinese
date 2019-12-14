@@ -35,14 +35,19 @@ class FromCorenlpConverter(PetrXmlConverter):
                         Attr.url: properties[9]
                     }
                     contents = []
-                    #
-                    # split news content which include "title" "reporttime info" and paragraphs by "　　"
-                    #
-                    #
-                    paragraphs = properties[8].strip("　　").split("　　")
+                    # #
+                    # # split news content which include "title" "reporttime info" and paragraphs by "　　"
+                    # #
+                    # #
+                    # paragraph
+                    # change the contents into unicode
+                    temp = properties[8].decode("utf-8")
+                    paragraphs = temp.split(u"\u3000")
+                    # remove the empty str
+                    paragraphs = filter(None, paragraphs)
                     for index, p in enumerate(paragraphs):
-                        #"\u3000" and "\xa0" means blank character
-                        p = p.replace(u'\u3000', u'').replace(u'\xa0', u'')
+                        # "\u3000" and "\xa0" means blank character
+                        p = p.strip('\r\n').replace(u'\u3000', u'').replace(u'\xa0', u'')
                         if p == "":
                             continue
                         # sentence
