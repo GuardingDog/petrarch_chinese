@@ -1,14 +1,13 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @Time    : 2017/11/20 15:42
-# @Author  : zhm
-# @File    : StringPreHandler.py
-# @Software: PyCharm
+#-*- coding:utf-8 _*-
+"""
+@author:charlesXu
+@file: StringPreHandler.py
+@desc: 字符串处理
+@time: 2019/05/23
+"""
+
 import regex as re
-import sys #要重新载入sys。因为 Python 初始化后会删除 sys.setdefaultencoding 这个方 法
-reload(sys)
-sys.setdefaultencoding('utf-8')
-import chardet
+
 # * 字符串预处理模块，为分析器TimeNormalizer提供相应的字符串预处理服务
 class StringPreHandler:
     @classmethod
@@ -22,6 +21,7 @@ class StringPreHandler:
         """
         pattern = re.compile(rules)
         res = pattern.sub('', target)
+        # print res
         return res
 
 
@@ -45,7 +45,7 @@ class StringPreHandler:
         for m in match:
             group = m.group()
             s = group.split(u"万")
-            s = [_f for _f in s if _f]
+            s = list(filter(None, s))
             num = 0
             if len(s) == 2:
                 num += cls.wordToNumber(s[0]) * 10000 + cls.wordToNumber(s[1]) * 1000
@@ -56,7 +56,7 @@ class StringPreHandler:
         for m in match:
             group = m.group()
             s = group.split(u"千")
-            s = [_f for _f in s if _f]
+            s = list(filter(None, s))
             num = 0
             if len(s) == 2:
                 num += cls.wordToNumber(s[0]) * 1000 + cls.wordToNumber(s[1]) * 100
@@ -67,7 +67,7 @@ class StringPreHandler:
         for m in match:
             group = m.group()
             s = group.split(u"百")
-            s = [_f for _f in s if _f]
+            s = list(filter(None, s))
             num = 0
             if len(s) == 2:
                 num += cls.wordToNumber(s[0]) * 100 + cls.wordToNumber(s[1]) * 10
@@ -101,7 +101,7 @@ class StringPreHandler:
         for m in match:
             group = m.group()
             s = group.split(u"百")
-            s = [_f for _f in s if _f]
+            s = list(filter(None, s))
             num = 0
             if len(s) == 1:
                 hundred = int(s[0])
@@ -117,7 +117,7 @@ class StringPreHandler:
         for m in match:
             group = m.group()
             s = group.split(u"千")
-            s = [_f for _f in s if _f]
+            s = list(filter(None, s))
             num = 0
             if len(s) == 1:
                 thousand = int(s[0])
@@ -133,7 +133,7 @@ class StringPreHandler:
         for m in match:
             group = m.group()
             s = group.split(u"万")
-            s = [_f for _f in s if _f]
+            s = list(filter(None, s))         # py2 的filter返回的是一个列表，py3返回的是一个对象
             num = 0
             if len(s) == 1:
                 tenthousand = int(s[0])
@@ -153,25 +153,25 @@ class StringPreHandler:
         :param s: 大写数字
         :return: 对应的整形数，如果不是数字返回-1
         """
-        if (s == u'零') or (s == u'0'):
+        if (s == u'零') or (s == '0'):
             return 0
-        elif (s == u'一') or (s == u'1'):
+        elif (s == u'一') or (s == '1'):
             return 1
-        elif (s == u'二') or (s == u'两') or (s == u'2'):
+        elif (s == u'二') or (s == u'两') or (s == '2'):
             return 2
-        elif (s == u'三') or (s == u'3'):
+        elif (s == u'三') or (s == '3'):
             return 3
-        elif (s == u'四') or (s == u'4'):
+        elif (s == u'四') or (s == '4'):
             return 4
-        elif (s == u'五') or (s == u'5'):
+        elif (s == u'五') or (s == '5'):
             return 5
-        elif (s == u'六') or (s == u'6'):
+        elif (s == u'六') or (s == '6'):
             return 6
-        elif (s == u'七') or (s == u'天') or (s == u'日') or (s == u'末') or (s == u'7'):
+        elif (s == u'七') or (s == u'天') or (s == u'日') or (s == u'末') or (s == '7'):
             return 7
-        elif (s == u'八') or (s == u'8'):
+        elif (s == u'八') or (s == '8'):
             return 8
-        elif (s == u'九') or (s == u'9'):
+        elif (s == u'九') or (s == '9'):
             return 9
         else:
             return -1

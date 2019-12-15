@@ -1,9 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @Time    : 2017/12/11 11:08
-# @Author  : zhm
-# @File    : LunarSolarConverter.py
-# @Software: PyCharm
+#-*- coding:utf-8 _*-
+"""
+@author:charlesXu
+@file: LunarSolarConvert.py
+@desc: 农历转换
+@time: 2019/05/23
+"""
+
 from pprint import pprint
 
 
@@ -28,21 +30,21 @@ def GetBitInt(data, length, shift):
 
 def SolarToInt(y, m, d):
     m = (m + 9) % 12
-    y -= m / 10
-    return 365 * y + y / 4 - y / 100 + y / 400 + (m * 306 + 5) / 10 + (d - 1)
+    y -= int(m / 10)
+    return 365 * y + int(y / 4) - int(y / 100) + int(y / 400) + int((m * 306 + 5) / 10) + (d - 1)
 
 
 def SolarFromInt(g):
-    y = (10000 * g + 14780) / 3652425
-    ddd = g - (365 * y + y / 4 - y / 100 + y / 400)
+    y = int((10000 * g + 14780) / 3652425)
+    ddd = g - (365 * y + int(y / 4) - int(y / 100) + int(y / 400))
     if ddd < 0:
         y -= 1
-        ddd = g - (365 * y + y / 4 - y / 100 + y / 400)
+        ddd = g - (365 * y + int(y / 4) - int(y / 100) + int(y / 400))
 
-    mi = (100 * ddd + 52) / 3060
+    mi = int((100 * ddd + 52) / 3060)
     mm = (mi + 2) % 12 + 1
-    y += (mi + 2) / 12
-    dd = ddd - (mi * 306 + 5) / 10 + 1
+    y += int((mi + 2) / 12)
+    dd = ddd - int((mi * 306 + 5) / 10) + 1
     solar = Solar(y, mm, dd)
     return solar
 
