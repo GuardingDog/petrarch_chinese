@@ -166,27 +166,83 @@ def get_id(ids):
 
 
 # modify event_temp
-def modify_event(event_temp, i, index, content, ids, pre_ids , flag = True):
+# event: cur_event
+# i: index of pre_event in event_temp
+# same_code: same_code of cur_event and pre_event
+def modify_event(event, i, same_code, op_code):
+    # 字典，保存了event所有信息
     pre = event_temp[i]
-    if flag:
-        event_temp.remove(pre)
+    # pre_event的三元式list
+    tuple_event = pre["origin"]
+    list_event = list(tuple_event)
+    # tuple, event三元式
+    cur_event = event
+    # 字典，保存了三元式之外的信息
+    cur_event_dict = filtered_events[cur_event]
 
-        tuple_event = pre["origin"]
-        list_event = list(tuple_event)
-        list_event[index] = content
+    # merge_ids
+    for id in cur_event_dict["ids"]:
+        if id not in pre["ids"]:
+            pre["ids"].append(id)
+    # only merge_ids
+    if op_code == 0:
+        # merge event code
+        if same_code == 3:
+            event_temp.remove(pre)
+            list_event[3] = cur_event[3]
+            pre.update({"origin": tuple(list_event)})
+            if "eventroot" in cur_event_dict:
+                pre.update({"eventroot": cur_event_dict["eventroot"]})
+                pre.update({"eventtext": cur_event_dict["eventtext"]})
+            event_temp.insert(i, pre)
+    else:
+        event_temp.remove(pre)
+        # merge_source
+        if op_code == 1:
+            list_event[1] = cur_event[1]
+            if "Source" in cur_event_dict:
+                pre.update({"Source": cur_event_dict["Source"]})
+        # merge_target
+        elif op_code == 2:
+            list_event[2] = cur_event[2]
+            if "Target" in cur_event_dict:
+                pre.update({"Target": cur_event_dict["Target"]})
+        # merge both source and target
+        elif op_code == 3:
+            list_event[1] = cur_event[1]
+            list_event[2] = cur_event[2]
+            if "Source" in cur_event_dict:
+                pre.update({"Source": cur_event_dict["Source"]})
+            if "Target" in cur_event_dict:
+                pre.update({"Target": cur_event_dict["Target"]})
+        # merge event code
+        if same_code == 3:
+            list_event[3] = cur_event[3]
+            if "eventroot" in cur_event_dict:
+                pre.update({"eventroot": cur_event_dict["eventroot"]})
+                pre.update({"eventtext": cur_event_dict["eventtext"]})
         pre.update({"origin": tuple(list_event)})
-    if ids not in pre_ids:
-        new_ids = ids + pre_ids
-        pre.update({"ids": new_ids})
-    if flag:
+        if "actorroot" in cur_event_dict:
+            pre.update({"actortext": cur_event_dict["actortext"]})
+            pre.update({"actorroot": cur_event_dict["actorroot"]})
         event_temp.insert(i, pre)
+
 
 def ner_to_string(ner):
     str = ",".join(ner)
     return str.encode("utf-8")
 
 
-def get_event_str(events_dict):
+def get_content_from_id(id,event_dict):
+    # paragraph id
+    p_key = id.split("_")[0]
+    # sentence id
+    sent_key = id.split("_")[1]
+    content = event_dict[p_key]["sents"][sent_key]["content"]
+    return content
+
+
+def get_event_str(events_dict,event_dict):
     global StorySource
     global NEvents
     global StoryIssues
@@ -195,7 +251,14 @@ def get_event_str(events_dict):
 
     strs = []
     for event in events_dict:
+        # 不输出不完整事件
+        if check_miss_component(event["origin"]) != 3:
+            continue
         ids = ';'.join(event['ids'])
+        contents = []
+        for id in event['ids']:
+            contents.append(get_content_from_id(id,event_dict))
+        contents_str = ";".join(contents)
 
         # 15.04.30: a very crude hack around an error involving multi-word
         # verbs
@@ -218,7 +281,7 @@ def get_event_str(events_dict):
         if PETRglobals.WriteContent:
             if 'content' in event:
                 event_str += '\tcontent\t{}\n'.format(
-                    event['content'])
+                    contents_str)
             else:
                 event_str += '\tcontent\t---\n'
 
@@ -275,7 +338,8 @@ def get_event_str(events_dict):
             event_str += '\tlocation2\t{}\n'.format(location2_str)
 
         strs.append(event_str)
-
+    if len(strs) == 0:
+        return None
     return strs
 
 
@@ -305,6 +369,9 @@ def write_events(event_dict, output_file, flag = True):
     global StoryIssues
     global StoryNer
     global StoryNer2
+    global filtered_events
+    global event_temp
+
 
     event_output = []
     # 测试用
@@ -353,37 +420,51 @@ def write_events(event_dict, output_file, flag = True):
                     pre_code = filter(lambda a: not a == '\n', pre_event[3])
                     pre_ids = pre_dict["ids"]
                     same_code = check_same_event(code, pre_code)
-                    if same_code == 0:
+                    # 0：不是同一事件 4：是同一事件但不是同一详细事件
+                    if same_code == 0 or same_code == 4:
                         continue
 
                     # 补充成分
                     if check_successive_sent(ids, pre_ids):
-                        supplementary = False
                         miss1 = check_miss_component(event)
                         miss2 = check_miss_component(pre_event)
-                        if (miss1 == 1 or miss1 == 3) and (miss2 == 2 or miss2 == 0):
-                            supplementary = True
-                            modify_event(event_temp, i, 2, target, ids, pre_ids)
-                        if (miss1 == 2 or miss1 == 3) and (miss2 == 1 or miss2 == 0):
-                            supplementary = True
-                            modify_event(event_temp, i, 1, source, ids, pre_ids)
-                        if supplementary or (miss2 == 3 and miss1 != 3):
-                            # cur_event is more detailed
-                            if same_code == 3:
-                                modify_event(event_temp, i, 3, code, ids, pre_ids)
-                            else:
-                                modify_event(event_temp, i, None, None, ids, pre_ids, False)
+                        # 共有 4*4 共 16种情况
+                        # 均缺失source/均缺失target/同时缺失source和target/事件均完整 则不进行成分补充，进入下一步事件合并。(4种情况pass)
+                        if miss1 == miss2:
+                            pass
+                        # event成分全部缺失，则直接将该事件跳过不处理，只将ids合并。(3种情况)
+                        elif miss1 == 0:
                             skip_flag = True
-                            break
+                            modify_event(event, i, same_code, 0)
+                        # 如果pre_event成分全部缺失,便将event的成分全部补充到pre_event中。(3种情况)
+                        elif miss2 == 0:
+                            skip_flag = True
+                            modify_event(event, i, same_code, 3)
+                        # 如果pre_event缺失source，event有source且二者target相同即合并。(2种情况)
+                        elif miss2 == 1:
+                            if miss1 == 2 or (miss1 == 3 and target == pre_event[2]):
+                                modify_event(event, i, same_code, 1)
+                                if miss1 == 2:
+                                    skip_flag = True
+                        # 如果pre_event缺失target，event有target且二者source相同即合并。(2种情况)
+                        elif miss2 == 2:
+                            if miss1 == 1 or (miss1 == 3 and source == pre_event[1]):
+                                modify_event(event, i, same_code, 2)
+                                if miss1 == 1:
+                                    skip_flag = True
+                        # 如果pre_event成分完整，而event缺失成分，则合并ids。(2种情况)
+                        elif miss2 == 3:
+                            if (miss1 == 1 and target == pre_event[2]) or (miss1 == 2 and source == pre_event[1]):
+                                skip_flag = True
+                                modify_event(event, i, same_code, 0)
 
-                    # 合并事件
-                    if story_date == pre_event[0] and source == pre_event[1] and target == pre_event[2]:
-                        if same_code == 2 or same_code == 3:
+                    # 父子事件替换
+                    if not skip_flag:
+                        # pre_event is modified
+                        pre_event = event_temp[i]["origin"]
+                        if story_date == pre_event[0] and source == pre_event[1] and target == pre_event[2]:
                             skip_flag = True
-                            # cur_event is more detailed
-                            if same_code == 3:
-                                modify_event(event_temp, i, 3, code, ids, pre_ids)
-                            break
+                            modify_event(event, i, same_code, 0)
 
             if skip_flag:
                 continue
@@ -422,7 +503,9 @@ def write_events(event_dict, output_file, flag = True):
 
             event_temp.append(temp_event_dict)
 
-        event_output += get_event_str(event_temp)
+        event_str = get_event_str(event_temp,event_dict)
+        if event_str is not None:
+            event_output += event_str
         story_events = '\n'.join(story_output)
         event_output.append(story_events)
 
