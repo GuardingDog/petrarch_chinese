@@ -18,6 +18,7 @@ class Attr(Enum):
     text = 'text'
     parse = 'parse'
     ner = 'ner'
+    reportTime = "reportTime"
 
 
 class PetrXmlConverter:
@@ -52,11 +53,27 @@ class PetrXmlConverter:
 
 
     # paragraph preprocess
+    #
     def format_text(self, content):
-        return content.replace('\u3000', '').replace('　', '') \
+        rule = u"(新华网|中新网|人民网|中新社|新华社|新华网|本报)[\u4e00-\u9fa50-9]{2,10}电"
+        pattern = re.compile(rule)
+
+        match = pattern.search(content)
+        reportTime = ""
+        if match:
+            startPos = int(match.span()[0])
+            endPos = int(match.span()[1])
+            reportTime = content[startPos : endPos]
+            content = content.replace(reportTime , "")
+
+
+        return reportTime , content.replace('\u3000', '').replace('　', '') \
+            .replace('。”', '”\n') \
             .replace('。', '\n') \
             .replace('；', '\n') \
             .replace(';', '\n') \
+            .replace('?”', '”\n') \
+            .replace('？”', '”\n') \
             .replace('?', '\n') \
             .replace('？', '\n') \
             .replace('。\n”', '”\n') \
@@ -89,7 +106,7 @@ class PetrXmlConverter:
                 return "e"
 
         sentences = []
-        content = self.format_text(content)
+        reportTime ,content = self.format_text(content)
         for i, sent in enumerate(content.split('\n')):
             # id = article_id + "-" + paragraph_id + _ + sentence_id  "50252-0001_0001"
             try:
@@ -103,7 +120,8 @@ class PetrXmlConverter:
                     Attr.id: sent_id,
                     Attr.text: sent,
                     Attr.parse: parse_text,
-                    Attr.ner: self.ner(sent)
+                    Attr.ner: self.ner(sent),
+                    Attr.reportTime:reportTime
                 })
             except Exception as e:
                 message = "Error in PetrXmlConverter parse:" + str(article_id) + "\t" + format_id(paragraph_id) + "\t" + format_id(
@@ -139,6 +157,11 @@ class PetrXmlConverter:
                     parse_text = xml_doc.createTextNode('\n' + sent[Attr.parse] + '\n')
                     xml_parse.appendChild(parse_text)
 
+                    # <Parse> element
+                    xml_reportTime= xml_doc.createElement("reportTime")
+                    parse_reportTime = xml_doc.createTextNode('\n' + sent[Attr.reportTime] + '\n')
+                    xml_reportTime.appendChild(parse_reportTime)
+
                     # <ner> element
                     xml_ner = xml_doc.createElement("Ner")
                     if sent[Attr.ner]:
@@ -154,6 +177,7 @@ class PetrXmlConverter:
                     xml_sentence.setAttribute('source', event[Attr.source])
                     xml_sentence.setAttribute('date', event[Attr.date])
                     xml_sentence.appendChild(xml_text)
+                    xml_sentence.appendChild(xml_reportTime)
                     xml_sentence.appendChild(xml_ner)
                     xml_sentence.appendChild(xml_parse)
 

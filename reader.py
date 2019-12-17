@@ -1,6 +1,7 @@
 #-*- coding:utf-8 -*-
 import sys
 import globalConfigPara as gcp
+
 try:
     from ConfigParser import ConfigParser
 except ImportError:

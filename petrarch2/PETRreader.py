@@ -2179,6 +2179,10 @@ def read_xml_input(filepaths, parsed=False):
                     location_text = location_text.replace('\n', '')
                     location = location_text.split(" ")
 
+                    reportTimeText = story.find("reportTime").text
+                    reportTimeText = reportTimeText.replace("\n" , "")
+
+
                     # for loc in LOCATION:
                     #     if loc not in location:
                     #         LOCATION.remove(loc)
@@ -2187,7 +2191,9 @@ def read_xml_input(filepaths, parsed=False):
                     sent_dict = {'content': text, 'parsed': parsed_content}
                     meta_content = {'date': story.attrib['date'],
                                     'source': story.attrib['source'],
-                                    'ner': location}
+                                    'ner': location,
+                                    "reportTimeText":reportTimeText
+                                    }
                     content_dict = {'sents': {sent_id: sent_dict},
                                     'meta': meta_content}
 

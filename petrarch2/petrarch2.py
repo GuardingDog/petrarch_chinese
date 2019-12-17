@@ -10,6 +10,7 @@ import time
 import logging
 import argparse
 from globalConfigPara import getNullActor as gna
+from collections import OrderedDict
 import json
 import timeRecognition.TimeNormalizer
 
@@ -57,6 +58,7 @@ import PETRreader  # input routines
 import PETRwriter
 import utilities
 import PETRtree
+from timeRecognition.TimeNormalizer import TimeNormalizer
 
 
 # ========================== VALIDATION FUNCTIONS ========================== #
@@ -262,6 +264,171 @@ def get_releasetime(event_dict):
         else:
             continue
     return releasetimeDic
+def get_reporttime(event_dict , realiseTimeDic):
+
+    pre_tn = TimeNormalizer(isPreferFuture=False)
+
+    reporttimeDic ={}
+
+    for key, val in sorted(event_dict.items()):
+        id = key.split("-")
+        articleId = id[0]
+
+        reportTimeText = event_dict[key][u"meta"][u"reportTimeText"]
+        if not reportTimeText == "":
+            reportTime = pre_tn.parse(reportTimeText , realiseTimeDic[articleId])
+            if "type" in reportTime.keys() and reportTime["type"] == u"timestamp":
+                reporttimeDic[articleId] = reportTime["date"]
+            else:
+                print( reportTimeText , "reportTimeInfo can not be extract . optimize your logic")
+                continue
+
+    return reporttimeDic
+# 描述：根据文本内容与报到时间确定句子时间
+# 状态：已弃用
+# def setSentenceTime(reportTime ,paraghId, paraghSents ):
+#
+#     tn = TimeNormalizer()
+#     for sentenceId in paraghSents :
+#         if sentenceId == u"0000" and paraghId == "0001":
+#             temp = paraghSents[sentenceId]["content"].strip().split(" ")
+#             if len(temp) > 1:
+#                 try:
+#                     sentenceTime = tn.parse(temp[len(temp)-1] , reportTime)
+#                 except:
+#                     sentenceTime = {"type": "timestamp", "date": reportTime}
+#
+#                 if "type" in sentenceTime.keys() and sentenceTime["type"] == u"timestamp":
+#                     paraghSents[sentenceId]["sentenceTime"] = sentenceTime["date"]
+#                 else:
+#                     paraghSents[sentenceId]["sentenceTime"] = reportTime
+#             else:
+#                 paraghSents[sentenceId]["sentenceTime"] = reportTime
+#         elif sentenceId == u"0000":
+#             try:
+#                 sentenceTime = tn.parse(paraghSents[sentenceId]["content"], reportTime)
+#             except:
+#                 sentenceTime = {"type" : "timestamp" , "date" : reportTime}
+#
+#             if "type" in sentenceTime.keys() and sentenceTime["type"] == u"timestamp":
+#                 paraghSents[sentenceId]["sentenceTime"] = sentenceTime["date"]
+#             else:
+#                 paraghSents[sentenceId]["sentenceTime"] = reportTime
+#
+#         else:
+#             lastSentenceId_int = int(sentenceId) - 1
+#             lastSentenceId_str = unicode(lastSentenceId_int)
+#             lastSentenceId = ""
+#             if len(lastSentenceId_str) == 1:
+#                 lastSentenceId = u"000" + lastSentenceId_str
+#             elif len(lastSentenceId_str) == 2:
+#                 lastSentenceId = u"00" + lastSentenceId_str
+#             else :
+#                 lastSentenceId = u"0" + lastSentenceId_str
+#             try:
+#                 sentenceTime = tn.parse(paraghSents[sentenceId]["content"], paraghSents[lastSentenceId]["sentenceTime"])
+#             except:
+#                 sentenceTime = {"type" : "timestamp" , "date" : reportTime}
+#
+#             if "type" in sentenceTime.keys() and sentenceTime["type"] == u"timestamp":
+#                 paraghSents[sentenceId]["sentenceTime"] = sentenceTime["date"]
+#             else:
+#                 paraghSents[sentenceId]["sentenceTime"] = reportTime
+#获得句子级别所有NT节点的父节点
+# 目前所观测到的NT节点通常其父节点为NP，并且大部分情况是NT外只有一层NP，此层NP即可包含需要的时间信息
+# 例如 几月几日
+# 但是也存在需要两层找到的NP节点才能包含所需要的时间信息
+# 例如 3月24日至27日
+# (NP
+#     (NP (NT 3月))
+#     (NP (NT 24日)
+#         (CC 至)
+#         (NT 27日)))
+def getNtPar(tree):
+    ntParentList = []
+
+    if len(tree.children) > 0 :
+        for child in tree.children:
+            if child.label == u"NT":
+
+                if child.parent.parent and child.parent.parent.label == u"NP":
+                    ntParentList.append(child.parent.parent)
+                else:
+                    ntParentList.append(child.parent)
+            else:
+                ntParentList = ntParentList + getNtPar(child)
+        return ntParentList
+    else:
+        return []
+
+
+def set_nt_textList(sentence):
+    # 获取NT节点父节点信息
+    parentNode = getNtPar(sentence.tree)
+    nodeSet = list(set(parentNode))
+    nodeSet.sort(key=parentNode.index)
+    ntTextList = []
+    if len(nodeSet) > 0:
+        for node in list(nodeSet):
+            ntTextList.append(utilities.extractText_from_Pharse(node))
+    sentence.ntTextList = ntTextList
+
+# 时间识别会返回四种类型
+#1、timespan ： 时间段 ， 几号到几号
+#       采用
+#2、timestamp：时间戳 ， 几号
+#       采用
+#3、timedelta：时间区间，多少天
+#       不采用
+#4、error：错误
+#       不采用
+def set_sentenceTimeByReport(sentence , reportTime ,paragh , sentenceId):
+    #判定当前句子时间
+    #如果是段落首句则根据报到时间为timebase
+    #如果不是首句则根据上一句时间为timebase
+    tn_pre = TimeNormalizer(isPreferFuture=False)
+    if "0000" == sentenceId :
+        timeBase = reportTime
+    else:
+        lastSentenceId_int = int(sentenceId) - 1
+        lastSentenceId_str = unicode(lastSentenceId_int)
+        lastSentenceId = ""
+        if len(lastSentenceId_str) == 1:
+            lastSentenceId = u"000" + lastSentenceId_str
+        elif len(lastSentenceId_str) == 2:
+            lastSentenceId = u"00" + lastSentenceId_str
+        else:
+            lastSentenceId = u"0" + lastSentenceId_str
+        # TODO：unknown bug need fix
+        try:
+            timeBase = paragh[lastSentenceId]["sentenceTime"]
+        except:
+            timeBase = reportTime
+
+    if sentence.ntTextList and len(sentence.ntTextList) > 0:
+        timeText = sentence.ntTextList[0]
+        try:
+            sentenceTime = tn_pre.parse(timeText , timeBase)
+            if "error" in sentenceTime.keys():
+                sentenceTime =  timeBase
+            else :
+                if sentenceTime["type"] == "timestamp":
+                    sentenceTime = sentenceTime["date"]
+                elif sentenceTime["type"] == "timespan" :
+                    sentenceTime = sentenceTime["timespan"]
+                else:
+                    sentenceTime = timeBase
+
+            sentence.sentenceTime =sentenceTime
+            paragh[sentenceId]["sentenceTime"] = sentenceTime
+        except:
+            sentence.sentenceTime =  timeBase
+            paragh[sentenceId]["sentenceTime"] = timeBase
+    else:
+        sentence.sentenceTime = timeBase
+        paragh[sentenceId]["sentenceTime"] = timeBase
+
+
 
 def do_coding(event_dict):
     """
@@ -283,30 +450,44 @@ def do_coding(event_dict):
     times = 0
     sents = 0
 
+    #获得发布时间
     realiseTimeDic = get_releasetime(event_dict)
 
     if not realiseTimeDic :
         print("realiseTimeDic have no timeinfo ,please check “get_releasetime” method")
+    #获得报道时间
+    reporttimeDic = get_reporttime(event_dict , realiseTimeDic)
 
 
     for key, val in sorted(event_dict.items()):
         NStory += 1
         prev_code = []
-
         SkipStory = False
-        print('\n\nProcessing story {}'.format(key))
+        print('\n\nProcessing paragraph {}'.format(key))
         StoryDate = event_dict[key]['meta']['date']
-
         if  StoryDate  == 'NULL':
             continue
-        for sent in val['sents']:
+
+        id = key.split("-")
+        articleId = id[0]
+        paraghId = id[1]
+
+        #设置发布时间与报道时间，报道时间缺失的按发布时间确定
+        val["meta"]["realiseTime"] = realiseTimeDic[articleId]
+        if articleId in reporttimeDic.keys():
+            val["meta"]["reportTime"] = reporttimeDic[articleId]
+        else:
+            val["meta"]["reportTime"] = realiseTimeDic[articleId]
+
+        with open("timeinfo.txt", "a") as f:
+            f.writelines(("文章段落ID:" + articleId + paraghId + "\n").decode("utf-8").encode("utf-8"))
+            f.writelines(("发布时间：" + val["meta"]["realiseTime"]).decode("utf-8").encode("utf-8") + "\n")
+            f.writelines(("报道时间：" + val["meta"]["reportTime"]).decode("utf-8").encode("utf-8") + "\n")
+
+        for sent in sorted(val['sents']):
             print("sent:",sent)
             NSent += 1
             if 'parsed' in event_dict[key]['sents'][sent]:
-                if 'config' in val['sents'][sent]:
-                    for _, config in event_dict[key]['sents'][sent]['config'].items():
-                        change_Config_Options(config)
-
                 SentenceID = '{}_{}'.format(key, sent)
                 SentenceText = event_dict[key]['sents'][sent]['content']
                 SentenceDate = event_dict[key]['sents'][sent][
@@ -315,7 +496,6 @@ def do_coding(event_dict):
                 Date = PETRreader.dstr_to_ordate(SentenceDate.split(' ')[0].replace('-', ''))
 
                 print("\n", SentenceID)
-
                 parsed = event_dict[key]['sents'][sent]['parsed']
                 treestr = parsed
                 disc = check_discards(SentenceText)
@@ -335,15 +515,29 @@ def do_coding(event_dict):
                 t1 = time.time()
                 try:
                     sentence = PETRtree.Sentence(treestr, SentenceText, Date)
+
                     print(sentence.txt)
                 except Exception as e:
 
                     message = "ERROR IN PETRARCH2 DO_CODING:" +  SentenceID + "\n" + SentenceText + str(e) + "\n"
                     logging.exception(message)
                     continue
-
+                set_nt_textList(sentence)
+                # if articleId == "343768" and paraghId == "0005":
+                #     print(12)
+                set_sentenceTimeByReport(sentence,val["meta"]["reportTime"],val['sents'] , sent)
 
                 # this is the entry point into the processing in PETRtree
+
+                with open("timeinfo.txt", "a") as f:
+                    f.writelines(("     句子ID:" + sent + "\n").decode("utf-8").encode("utf-8"))
+                    f.write("       "+sentence.txt.decode("utf-8").encode("utf-8")+ "\n")
+                    f.write("           时间词列表: ")
+                    for text in sentence.ntTextList:
+                        f.write(text+",")
+                    f.write("\n         句子时间：" +str(sentence.sentenceTime).decode("utf-8").encode("utf-8") + "\n\n")
+
+
                 try:
                     coded_events, meta = sentence.get_events()
                 except Exception as e:

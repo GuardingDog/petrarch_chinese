@@ -511,6 +511,19 @@ def code_to_string(events):
 		print(e)
 		return str(events)
 
+def extractText_from_Pharse(pharse):
+	pharseText = ""
+	if pharse.text == u"" and len(pharse.children) > 0:
+		for child in pharse.children:
+			if len(child.children) > 0 :
+				pharseText = pharseText + extractText_from_Pharse(child)
+			else:
+				pharseText = pharseText + child.text
+
+	return pharseText
+
+
+
 
 def convert_code(code, forward=1):
 	"""
