@@ -508,7 +508,7 @@ class NounPhrase(Phrase):
                 text_children += value[0].split()
                 NPcodes += value[1]
             elif child.label[:2] in ["JJ", "DT", "NN", "NR"]:
-                print('line 501: child: ', child.label[:2], json.dumps(child.text.split(), ensure_ascii=False, encoding='utf-8'))
+               #combine_code print('line 511: child: ', child.label[:2], json.dumps(child.text.split(), ensure_ascii=False, encoding='utf-8'))
                 text_children += child.text.split()
 
             elif child.label == "PP":
@@ -989,8 +989,8 @@ class VerbPhrase(Phrase):
             low = ""
 
         if isinstance(low, list):
-            for i, x in enumerate(low) :
-                print(i,x)
+            # for i, x in enumerate(low) :
+            #     print(i,x)
             prepIndex_low=[i for i,x in enumerate(low) if not isinstance(x, tuple)]
             prepIndex = [i for i, x in enumerate(self.children) if x.label=='PP']
             for event in low:
@@ -1179,7 +1179,6 @@ class VerbPhrase(Phrase):
             result_dic[prep_type] = []
             for j in prep_list[1:]:
                 result_dic[prep_type].append(j)
-        print(result_dic.items())
         return result_dic[u'对象类']
 
     def get_lower(self):
@@ -1419,14 +1418,14 @@ class VerbPhrase(Phrase):
             # --              print('++3',match['line'])
 
             meta.append(match['line'])
-            print("match:",match)
-            print("match_code:",match['code'])
-            print(json.dumps(match, ensure_ascii=False, encoding='utf-8'))
+            # print("match:",match)
+            # print("match_code:",match['code'])
+            # print(json.dumps(match, ensure_ascii=False, encoding='utf-8'))
             active = utilities.convert_code(match['code'])
-            print("line 1256: match: ", json.dumps(match, ensure_ascii=False, encoding='utf-8'))
-            print(json.dumps(match, ensure_ascii=False, encoding='utf-8'))
+            # print("line 1256: match: ", json.dumps(match, ensure_ascii=False, encoding='utf-8'))
+            # print(json.dumps(match, ensure_ascii=False, encoding='utf-8'))
             active = utilities.convert_code(match['code'])
-            print("code:", utilities.convert_code(active, 0))
+            # print("code:", utilities.convert_code(active, 0))
             self.code = active
             # TODO ：刪掉下面if ok
 
@@ -1962,8 +1961,8 @@ class Sentence:
             # print("end:",events)
 
             #测试用
-            import globalConfigPara as gcp
-            PETRwriter.write_events_demo(self, events, meta, './evtss.txt')
+            # import globalConfigPara as gcp
+            # PETRwriter.write_events_demo(self, events, meta, './evtss.txt')
 
             self.get_events = self.return_events
 #--            print('GF3',valid,'\nGF4',meta) # --

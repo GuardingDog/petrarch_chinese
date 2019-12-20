@@ -489,17 +489,14 @@ def do_coding(event_dict):
             f.writelines(("文章段落ID:" + articleId + " " + paraghId + "\n").decode("utf-8").encode("utf-8"))
 
         for sent in sorted(val['sents']):
-            print("sent:",sent)
+            print('\n\nProcessing sentence {}'.format(sent))
             NSent += 1
             if 'parsed' in event_dict[key]['sents'][sent]:
                 SentenceID = '{}_{}'.format(key, sent)
                 SentenceText = event_dict[key]['sents'][sent]['content']
                 SentenceDate = event_dict[key]['sents'][sent][
                     'date'] if 'date' in event_dict[key]['sents'][sent] else StoryDate
-
                 Date = PETRreader.dstr_to_ordate(SentenceDate.split(' ')[0].replace('-', ''))
-
-                print("\n", SentenceID)
                 parsed = event_dict[key]['sents'][sent]['parsed']
                 treestr = parsed
                 disc = check_discards(SentenceText)
@@ -548,7 +545,7 @@ def do_coding(event_dict):
                 # print("coded_events:",coded_events)
                 # print("meta:",meta)
 
-                print("coded_events:",coded_events)
+                #print("coded_events:",coded_events)
                 #print("meta:",meta)
                 # exit()
 

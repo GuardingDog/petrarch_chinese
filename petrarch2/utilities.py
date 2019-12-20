@@ -465,8 +465,7 @@ def combine_code(selfcode, to_add):
 	combined value
 
 	"""
-	print('line 413: combine_code()')
-	print(selfcode, to_add)
+
 	if to_add < 0:
 		return to_add + selfcode
 	if selfcode >= 0x1000 and to_add >= 0x1000:

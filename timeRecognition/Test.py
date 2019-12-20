@@ -14,6 +14,7 @@ sys.setdefaultencoding("utf-8")
 tn = TimeNormalizer(isPreferFuture=True)
 res = tn.parse(target="18天" , timeBase="2018-02-10 00:00:00")
 print(res)
+print(u"u'\u4ece', u'\u5728', u'\u5230', u'\u81ea\u4ece', u'\u79bb', u'\u7531', u'\u987a', u'\u987a\u7740', u'\u6cbf', u'\u6cbf\u7740'")
 
 
 # res = tn.parse(target=u'晚上8点到上午10点之间') # target为待分析语句，timeBase为基准时间默认是当前时间
