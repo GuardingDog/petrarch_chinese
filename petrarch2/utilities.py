@@ -306,43 +306,25 @@ def extract_phrases(sent_dict, sent_id):
 
 
 def story_filter(story_dict, story_id):
+
 	"""
-	One-a-story filter for the events. There can only be only one unique
-	(DATE, SRC, TGT, EVENT) tuple per story.
-
-	Parameters
-	----------
-
-	story_dict: Dictionary.
-				Story-level dictionary as stored in the main event-holding
-				dictionary within PETRARCH.
-
-	story_id: String.
-				Unique StoryID in standard PETRARCH format.
-
-	Returns
-	-------
-
-	filtered: Dictionary.
+	story_filter：
+		input: story_dict , story_id
+			story_dict:Dictionary
+						paragraph dictionary include none event information
+			story_id:String
+					Unique paragraph id like  "35204_0001" format
+		output:	Dictionary.
 				Holder for filtered events with the format
 				{(EVENT TUPLE): {'issues': [], 'ids': []}} where the 'issues'
 				list is optional.
+
+	what does this method do ?
+		to filter event information.
+		Before this method , "story_dict" include much none event sentence info
+		After this method , return filter event and correlation info
+
 	"""
-
-	# def get_event_root(verb_list):
-	# 	result = []
-	# 	for verbs in verb_list:
-	# 		for verb in verbs:
-	# 			if verb in PETRglobals.VerbDict['verbs']:
-	# 				result.append(PETRglobals.VerbDict['verbs'][verb]['#']['#']['meaning'])
-	#
-	# 	result = list(set(result))
-	# 	if len(result) == 1:
-	# 		result = result[0]
-	# 	else:
-	# 		result = ' '.join(result)
-	# 	return result
-
 	filtered = defaultdict(dict)
 	story_date = story_dict['meta']['date']
 	for sent in sorted(story_dict['sents']):
@@ -374,27 +356,43 @@ def story_filter(story_dict, story_id):
 						if PETRglobals.WriteActorText:
 							filtered[event_tuple]['actortext'] = sent_dict[
 								'meta']['actortext'][event_tuple[1:]]
+					if 'eventtext' in sent_dict['meta'] and event_tuple[1:] in sent_dict['meta'][
+							'eventtext']:
 						if PETRglobals.WriteEventText:
 							filtered[event_tuple]['eventtext'] = sent_dict[
 								'meta']['eventtext'][event_tuple[1:]]
-						# if True:
+					if 'actorroot' in sent_dict['meta'] and event_tuple[1:] in sent_dict['meta'][
+							'actorroot']:
 						if PETRglobals.WriteActorRoot:
 							filtered[event_tuple]['actorroot'] = sent_dict[
 								'meta']['actorroot'][event_tuple[1:]]
+					if 'eventroot' in sent_dict['meta'] and event_tuple[1:] in sent_dict['meta'][
+							'eventroot']:
 						if PETRglobals.WriteEventRoot:
 							#filtered[event_tuple]['eventroot'] = get_event_root(sent_dict['meta'][event_tuple[1:]])
 							filtered[event_tuple]['eventroot'] = sent_dict[
 								'meta']['eventroot'][event_tuple[1:]]
+					if 'content' in sent_dict :
 						if PETRglobals.WriteContent:
 							#filtered[event_tuple]['eventroot'] = get_event_root(sent_dict['meta'][event_tuple[1:]])
 							filtered[event_tuple]['content'] = sent_dict[
 								'content']
+					if 'Source' in sent_dict['meta'] and event_tuple[1:] in sent_dict['meta'][
+							'Source']:
 						if PETRglobals.WriteSource :
 							filtered[event_tuple]['Source'] = sent_dict[
 								'meta']["Source"][event_tuple[1:]]
+					if 'Target' in sent_dict['meta'] and event_tuple[1:] in sent_dict['meta'][
+							'Target']:
 						if PETRglobals.WriteTarget :
 							filtered[event_tuple]['Target'] = sent_dict[
 								'meta']["Target"][event_tuple[1:]]
+					if 'sentenceTime' in sent_dict['meta'] :
+						filtered[event_tuple]['sentenceTime'] = sent_dict[
+							'meta']["sentenceTime"]
+					if 'timeText' in sent_dict['meta']:
+						filtered[event_tuple]['timeText'] = sent_dict[
+								'meta']["timeText"]
 
 				except IndexError:  # 16.04.29 pas it would be helpful to log an error here...
 					pass

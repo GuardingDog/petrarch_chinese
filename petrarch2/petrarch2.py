@@ -479,10 +479,14 @@ def do_coding(event_dict):
         else:
             val["meta"]["reportTime"] = realiseTimeDic[articleId]
 
+
+        if paraghId == "0000":
+            with open("timeinfo.txt", "a") as f:
+
+                f.writelines(("发布时间：" + val["meta"]["realiseTime"]).decode("utf-8").encode("utf-8") + "\n")
+                f.writelines(("报道时间：" + val["meta"]["reportTime"]).decode("utf-8").encode("utf-8") + "\n")
         with open("timeinfo.txt", "a") as f:
-            f.writelines(("文章段落ID:" + articleId + paraghId + "\n").decode("utf-8").encode("utf-8"))
-            f.writelines(("发布时间：" + val["meta"]["realiseTime"]).decode("utf-8").encode("utf-8") + "\n")
-            f.writelines(("报道时间：" + val["meta"]["reportTime"]).decode("utf-8").encode("utf-8") + "\n")
+            f.writelines(("文章段落ID:" + articleId + " " + paraghId + "\n").decode("utf-8").encode("utf-8"))
 
         for sent in sorted(val['sents']):
             print("sent:",sent)
@@ -516,28 +520,25 @@ def do_coding(event_dict):
                 try:
                     sentence = PETRtree.Sentence(treestr, SentenceText, Date)
 
-                    print(sentence.txt)
                 except Exception as e:
 
                     message = "ERROR IN PETRARCH2 DO_CODING:" +  SentenceID + "\n" + SentenceText + str(e) + "\n"
                     logging.exception(message)
                     continue
                 set_nt_textList(sentence)
-                # if articleId == "343768" and paraghId == "0005":
-                #     print(12)
+
                 set_sentenceTimeByReport(sentence,val["meta"]["reportTime"],val['sents'] , sent)
 
-                # this is the entry point into the processing in PETRtree
 
                 with open("timeinfo.txt", "a") as f:
                     f.writelines(("     句子ID:" + sent + "\n").decode("utf-8").encode("utf-8"))
                     f.write("       "+sentence.txt.decode("utf-8").encode("utf-8")+ "\n")
-                    f.write("           时间词列表: ")
+                    f.write("       时间词列表: ")
                     for text in sentence.ntTextList:
                         f.write(text+",")
-                    f.write("\n         句子时间：" +str(sentence.sentenceTime).decode("utf-8").encode("utf-8") + "\n\n")
-
-
+                    f.write("\n       句子时间：" +str(sentence.sentenceTime).decode("utf-8").encode("utf-8") + "\n\n")
+                timeText = sentence.ntTextList
+                sentenceTime = sentence.sentenceTime
                 try:
                     coded_events, meta = sentence.get_events()
                 except Exception as e:
@@ -596,6 +597,10 @@ def do_coding(event_dict):
                                 'meta']['Source'] = {}
                             event_dict[key]['sents'][sent][
                                 'meta']['Target'] = {}
+                            event_dict[key]['sents'][sent][
+                                'meta']['timeText'] = timeText
+                            event_dict[key]['sents'][sent][
+                                'meta']['sentenceTime'] = {sentenceTime}
 # --                            print('DC1:',text_dict) # --
                             for evt in coded_events:
                                 # realLocation = []
@@ -853,7 +858,6 @@ def run(filepaths, out_file, s_parsed):
 
     else:
         updated_events = do_coding(events)
-        print("update_event:")
         #print(json.dumps(updated_events, ensure_ascii=False, encoding='utf-8'))
         import globalConfigPara as gcp
         if PETRglobals.NullVerbs:

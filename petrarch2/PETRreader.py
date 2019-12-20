@@ -187,6 +187,8 @@ def parse_Config(config_path):
         PETRglobals.WriteEventText = get_config_boolean('write_event_text')
         PETRglobals.NullVerbs  = get_config_boolean('null_verbs')
         PETRglobals.NullActors = get_config_boolean('null_actors')
+        PETRglobals.WriteSentenceTime = get_config_boolean('write_sentence_time')
+        PETRglobals.WriteTimeText = get_config_boolean('write_time_text')
 
         if parser.has_option(
                 'Options', 'require_dyad'):  # this one defaults to True

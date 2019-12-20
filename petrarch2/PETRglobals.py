@@ -70,6 +70,8 @@ WriteContent = True
 WriteSource = True
 WriteTarget =True
 WriteNer = True
+WriteSentenceTime = True
+WriteTimeText = True
 
 RunTimeString = ''  # used in error and debugging files -- just set it once
 

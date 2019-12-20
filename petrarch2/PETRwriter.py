@@ -260,6 +260,9 @@ def get_event_str(events_dict,event_dict):
             contents.append(get_content_from_id(id,event_dict))
         contents_str = ";".join(contents)
 
+        articleId = event['ids'][0].split("_")[0]
+        sentenceId= event['ids'][0].split("_")[1]
+
         # 15.04.30: a very crude hack around an error involving multi-word
         # verbs
         if not isinstance(event["origin"][3], basestring):
@@ -336,6 +339,17 @@ def get_event_str(events_dict,event_dict):
             else:
                 location2_str = "未提取出地点"
             event_str += '\tlocation2\t{}\n'.format(location2_str)
+        if PETRglobals.WriteSentenceTime:
+            senTimeList = list(event["sentenceTime"])
+            timeStamp = ""
+            for Text in senTimeList:
+                timeStamp = timeStamp + Text
+            event_str += '\tsentenceTime\t{}\n'.format(timeStamp)
+        if PETRglobals.WriteTimeText:
+            timeText = ""
+            for Text in event["timeText"]:
+                timeText = timeText + Text
+            event_str += '\ttimeText\t{}\n'.format(timeText)
 
         strs.append(event_str)
     if len(strs) == 0:
@@ -394,6 +408,7 @@ def write_events(event_dict, output_file, flag = True):
             StorySource = story_dict['meta']['source']
         else:
             StorySource = 'NULL'
+
         if 'url' in story_dict['meta']:
             url = story_dict['meta']['url']
         else:
@@ -500,6 +515,11 @@ def write_events(event_dict, output_file, flag = True):
 
             if 'eventroot' in filtered_events[event]:
                 temp_event_dict.update({"eventroot": filtered_events[event]['eventroot']})
+
+            if 'sentenceTime' in filtered_events[event]:
+                temp_event_dict.update({"sentenceTime": filtered_events[event]['sentenceTime']})
+            if 'timeText' in filtered_events[event]:
+                temp_event_dict.update({"timeText": filtered_events[event]['timeText']})
 
             event_temp.append(temp_event_dict)
 
