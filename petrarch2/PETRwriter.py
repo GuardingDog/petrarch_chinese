@@ -32,8 +32,6 @@ import utilities
 import codecs
 import json
 import globalConfigPara as gcp
-import PETRtree
-
 
 def get_actor_text(meta_strg):
     """ Extracts the source and target strings from the meta string. """
@@ -350,6 +348,9 @@ def get_event_str(events_dict,event_dict):
             for Text in event["timeText"]:
                 timeText = timeText + Text
             event_str += '\ttimeText\t{}\n'.format(timeText)
+        if PETRglobals.WriteNer:
+            locationText = event["locationText"]
+            event_str += '\tlocation3\t{}\n'.format(locationText)
 
         strs.append(event_str)
     if len(strs) == 0:
@@ -520,6 +521,8 @@ def write_events(event_dict, output_file, flag = True):
                 temp_event_dict.update({"sentenceTime": filtered_events[event]['sentenceTime']})
             if 'timeText' in filtered_events[event]:
                 temp_event_dict.update({"timeText": filtered_events[event]['timeText']})
+            if 'locationText' in filtered_events[event]:
+                temp_event_dict.update({"locationText": filtered_events[event]['locationText']})
 
             event_temp.append(temp_event_dict)
 

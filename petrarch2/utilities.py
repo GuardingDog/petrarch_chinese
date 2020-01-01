@@ -393,6 +393,8 @@ def story_filter(story_dict, story_id):
 					if 'timeText' in sent_dict['meta']:
 						filtered[event_tuple]['timeText'] = sent_dict[
 								'meta']["timeText"]
+					if "locationText" in sent_dict:
+						filtered[event_tuple]['locationText'] = sent_dict["locationText"]
 
 				except IndexError:  # 16.04.29 pas it would be helpful to log an error here...
 					pass

@@ -2183,14 +2183,15 @@ def read_xml_input(filepaths, parsed=False):
 
                     reportTimeText = story.find("reportTime").text
                     reportTimeText = reportTimeText.replace("\n" , "")
-
+                    locationText = story.find("locationText").text
+                    locationText = locationText.replace("\n" , "")
 
                     # for loc in LOCATION:
                     #     if loc not in location:
                     #         LOCATION.remove(loc)
 
                     text = text.replace('\n', ' ').replace('  ', ' ')
-                    sent_dict = {'content': text, 'parsed': parsed_content}
+                    sent_dict = {'content': text, 'parsed': parsed_content , "locationText" :locationText }
                     meta_content = {'date': story.attrib['date'],
                                     'source': story.attrib['source'],
                                     'ner': location,

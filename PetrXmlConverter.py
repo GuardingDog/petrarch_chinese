@@ -19,6 +19,7 @@ class Attr(Enum):
     parse = 'parse'
     ner = 'ner'
     reportTime = "reportTime"
+    locationText = "locationText"
 
 
 class PetrXmlConverter:
@@ -51,6 +52,8 @@ class PetrXmlConverter:
     def parse(self, text):
         return ''
 
+    def getparseByprops(self,text):
+        return ""
 
     # paragraph preprocess
     #
@@ -113,7 +116,12 @@ class PetrXmlConverter:
                 sent = sent.strip('\r\n').replace(u'\xa0', u'')
                 if sent == "":
                     continue
-                parse_text = self.parse(sent)
+                #parse_text = self.parse(sent)
+                dict_test = self.getparseByprops(sent)
+                parse_text = dict_test["parse"]
+                locationText = dict_test["locationText"]
+                if type(locationText) is list:
+                    locationText = locationText[0][0]
                 sent_id = str(article_id) + "-" + format_id(paragraph_id) + "_" + format_id(i)
                 print "正在处理:" + sent_id
                 sentences.append({
@@ -121,7 +129,8 @@ class PetrXmlConverter:
                     Attr.text: sent,
                     Attr.parse: parse_text,
                     Attr.ner: self.ner(sent),
-                    Attr.reportTime:reportTime
+                    Attr.reportTime:reportTime,
+                    Attr.locationText:locationText
                 })
             except Exception as e:
                 message = "Error in PetrXmlConverter parse:" + str(article_id) + "\t" + format_id(paragraph_id) + "\t" + format_id(
@@ -161,6 +170,10 @@ class PetrXmlConverter:
                     xml_reportTime= xml_doc.createElement("reportTime")
                     parse_reportTime = xml_doc.createTextNode('\n' + sent[Attr.reportTime] + '\n')
                     xml_reportTime.appendChild(parse_reportTime)
+                    # <Parse> element
+                    xml_locationText = xml_doc.createElement("locationText")
+                    parse_locationText = xml_doc.createTextNode('\n' + sent[Attr.locationText] + '\n')
+                    xml_locationText.appendChild(parse_locationText)
 
                     # <ner> element
                     xml_ner = xml_doc.createElement("Ner")
@@ -178,6 +191,9 @@ class PetrXmlConverter:
                     xml_sentence.setAttribute('date', event[Attr.date])
                     xml_sentence.appendChild(xml_text)
                     xml_sentence.appendChild(xml_reportTime)
+
+                    xml_sentence.appendChild(xml_locationText)
+
                     xml_sentence.appendChild(xml_ner)
                     xml_sentence.appendChild(xml_parse)
 
@@ -199,6 +215,8 @@ class PetrXmlConverter:
             for sentence in event[Attr.content]:
                 print(sentence[Attr.text])
                 print(sentence[Attr.parse])
+    def getparseByprops(self):
+        return ""
 
     def run(self):
         self.generate_events()
