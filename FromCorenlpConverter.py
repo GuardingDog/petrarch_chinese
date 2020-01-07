@@ -173,7 +173,7 @@ class FromCorenlpConverter(PetrXmlConverter):
             return 0
 
     def getLocation(self ,features, textinfo):
-        with open("F:\git_local2\petrarch_chinese\petrarch2\parameter_result_2.pickle", "rb") as f:
+        with open("petrarch2\parameter_result_2.pickle", "rb") as f:
             dict_para = pk.load(f)
 
         p0V = dict_para["p0V"]

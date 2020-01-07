@@ -338,10 +338,11 @@ def get_event_str(events_dict,event_dict):
                 location2_str = "未提取出地点"
             event_str += '\tlocation2\t{}\n'.format(location2_str)
         if PETRglobals.WriteSentenceTime:
-            senTimeList = list(event["sentenceTime"])
             timeStamp = ""
-            for Text in senTimeList:
-                timeStamp = timeStamp + Text
+            if "sentenceTime" in event:
+                senTimeList = list(event["sentenceTime"])
+                for Text in senTimeList:
+                    timeStamp = timeStamp + Text
             event_str += '\tsentenceTime\t{}\n'.format(timeStamp)
         if PETRglobals.WriteTimeText:
             timeText = ""
