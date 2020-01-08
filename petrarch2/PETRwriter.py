@@ -32,6 +32,7 @@ import utilities
 import codecs
 import json
 import globalConfigPara as gcp
+import os
 
 def get_actor_text(meta_strg):
     """ Extracts the source and target strings from the meta string. """
@@ -338,11 +339,10 @@ def get_event_str(events_dict,event_dict):
                 location2_str = "未提取出地点"
             event_str += '\tlocation2\t{}\n'.format(location2_str)
         if PETRglobals.WriteSentenceTime:
+            senTimeList = list(event["sentenceTime"])
             timeStamp = ""
-            if "sentenceTime" in event:
-                senTimeList = list(event["sentenceTime"])
-                for Text in senTimeList:
-                    timeStamp = timeStamp + Text
+            for Text in senTimeList:
+                timeStamp = timeStamp + Text
             event_str += '\tsentenceTime\t{}\n'.format(timeStamp)
         if PETRglobals.WriteTimeText:
             timeText = ""
@@ -539,17 +539,64 @@ def write_events(event_dict, output_file, flag = True):
     if output_file:
         if flag:
             f = codecs.open(output_file, encoding='utf-8', mode='a')
-            for str in event_output:
+            for strw in event_output:
                 #             field = str.split('\t')  # debugging
                 #            f.write(field[5] + '\n')
-                f.write(str + '\n')
+                f.write(strw + '\n')
             f.close()
         else:
             with open("evets.result_before_merge.txt", 'a') as f:
-                for str in event_output:
-                    f.write(str + '\n')
+                for strw in event_output:
+                    f.write(strw + '\n')
+    if output_file:
+        if flag:
+            f = codecs.open(output_file, encoding='utf-8', mode='a')
+            for strq in event_output:
+                #             field = str.split('\t')  # debugging
+                #            f.write(field[5] + '\n')
+                f.write(strq + '\n')
+            f.close()
+        else:
+            story_list = []
+            for strp in event_output:
+                f_list = strp.splitlines();
+                for index in range(len(f_list)):
+                    if(index==2):
+                        story_list.append(f_list[index][5:11])
+            story_list2=list(set(story_list))
+
+            for i in range(len(story_list2)):
+                str_name=story_list2[i]+"evets.result_before_merge.txt"
+                with open(str_name, 'a') as f:
+                    TEXT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))  # 获取项目根目录
+                    path = os.path.join(TEXT_ROOT, "input\\test.txt")  # 文件路径
+                    with open(path, 'r') as file_to_read:
+                        while True:
+                            line = file_to_read.readline()
+                            if not line:
+                                break
+                            # if(line[0:6]==story_list2[i]):
+                            #     f.write(line)
+                            if (line.split("\t")[0] == story_list2[i]):
+                                f.write(line)
+                    event_num = 1
+                    for strss in event_output:
+                        listk = strss.splitlines()
+                        for index in range(len(listk)):
+                            temp = listk[2].split('\t')
+                            article_id = temp[len(temp) - 1].split('-')[0]
+                            if (article_id == story_list2[i]):
+                                if (index == 0):
+                                    f.write('\n')
+                                    ss = "#e" + str(event_num)
+                                    f.write(ss + '\n')
+                                    event_num = event_num + 1
+                                if (
+                                        index == 0 or index == 2 or index == 4 or index == 5 or index == 6 or index == 8 or index == 10):
+                                    f.write(listk[index] + '\n')
 
 
+                    f.close()
 
 def write_nullverbs(event_dict, output_file):
     """
