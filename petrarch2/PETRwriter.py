@@ -341,8 +341,13 @@ def get_event_str(events_dict,event_dict):
         if PETRglobals.WriteSentenceTime:
             senTimeList = list(event["sentenceTime"])
             timeStamp = ""
+            timeStamp = ""
             for Text in senTimeList:
-                timeStamp = timeStamp + Text
+                if "sentenceTime" in event:
+                    timeStamp = timeStamp + Text
+                    senTimeList = list(event["sentenceTime"])
+                    for Text in senTimeList:
+                        timeStamp = timeStamp + Text
             event_str += '\tsentenceTime\t{}\n'.format(timeStamp)
         if PETRglobals.WriteTimeText:
             timeText = ""
