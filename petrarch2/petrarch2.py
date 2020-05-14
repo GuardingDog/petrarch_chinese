@@ -516,6 +516,10 @@ def do_coding(event_dict):
                 t1 = time.time()
                 try:
                     sentence = PETRtree.Sentence(treestr, SentenceText, Date)
+                    '''
+                    下面一行是调用句法树分类器
+                    '''
+                    sentence.classify_tree()
 
                 except Exception as e:
 

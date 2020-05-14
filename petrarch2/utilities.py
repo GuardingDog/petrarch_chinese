@@ -94,6 +94,23 @@ nulllist = []  # used when PETRglobals.NullVerbs == True
 #
 #     return event_dict
 
+def classify_tree(_sentence):
+	root = _sentence.tree
+	ip_count = 1
+
+
+
+def count_tree_layers(treestr):
+    maxLeft = 0
+    count = 0
+    for index in range(len(treestr)):
+        if treestr[index] == "(":
+            count += 1
+            if count > maxLeft:
+                maxLeft = count
+        if treestr[index] ==")":
+            count -= 1
+    return maxLeft
 
 def parse_to_text(parse):
 	x = filter(lambda a: not a.startswith("("), parse.replace(")", "").split())

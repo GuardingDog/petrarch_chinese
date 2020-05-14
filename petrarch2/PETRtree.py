@@ -1970,6 +1970,55 @@ class Sentence:
         except Exception as e:  # 16.06.27 pas: need to log this, and also figure out where it comes from
             print("Error in parsing:", e)
             return None, None
+'''
+下面的为语法分类器代码
+'''
+    def first_traversal(self):
+        root = self.tree
+        node_list = []
+        type = "Simple"
+        node_list.append(root)
+        while(len(node_list)!=0):
+            node = node_list.pop()
+            for child in node.children:
+                node_list.append(child)
+                if child.label == "IP":
+                    ip_lowest = child
+                    type = "Complicated"
+                elif child.label == "LB" or child == "SB":
+                    type = "Passive"
+                    break
+                elif child.label =="BA":
+                    type = "BA"
+                    break
+        return type, ip_lowest
+
+    def classify_tree(self):
+        type, ip_lowest = self.first_traversal()
+        if type != "Complicated":
+            self.tree.type = type
+        else:
+            has_np = False
+            for child in ip_lowest.children:
+                if child.label == "NP":
+                    has_np = True
+                    self.tree.type = "Object Clause"
+                if child.label == "VP":
+                    vp_children = child
+            if not has_np:
+                has_np_np = False
+                has_pp_np = False
+                for vp_child in vp_children:
+                    if vp_child.label == "NP":
+                        has_np_np = True
+                    if vp_child.label == "PP":
+                        pp_children = vp_child
+                        for pp_child in pp_children:
+                            if pp_child.label == "NP":
+                                has_pp_np = True
+                if has_pp_np and has_np_np:
+                    self.tree.type = "With Object"
+                else: self.tree.type = "Without Object"            
 
     '''def print_to_file(self,root,file = ""):
 
