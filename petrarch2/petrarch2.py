@@ -527,13 +527,13 @@ def do_coding(event_dict):
                 set_sentenceTimeByReport(sentence,val["meta"]["reportTime"],val['sents'] , sent)
 
 
-                with open("timeinfo.txt", "a") as f:
-                    f.writelines(("     句子ID:" + sent + "\n").decode("utf-8").encode("utf-8"))
-                    f.write("       "+sentence.txt.decode("utf-8").encode("utf-8")+ "\n")
-                    f.write("       时间词列表: ")
-                    for text in sentence.ntTextList:
-                        f.write(text+",")
-                    f.write("\n       句子时间：" +str(sentence.sentenceTime).decode("utf-8").encode("utf-8") + "\n\n")
+                # with open("timeinfo.txt", "a") as f:
+                #     f.writelines(("     句子ID:" + sent + "\n").decode("utf-8").encode("utf-8"))
+                #     f.write("       "+sentence.txt.decode("utf-8").encode("utf-8")+ "\n")
+                #     f.write("       时间词列表: ")
+                #     for text in sentence.ntTextList:
+                #         f.write(text+",")
+                #     f.write("\n       句子时间：" +str(sentence.sentenceTime).decode("utf-8").encode("utf-8") + "\n\n")
                 timeText = sentence.ntTextList
                 sentenceTime = sentence.sentenceTime
                 try:

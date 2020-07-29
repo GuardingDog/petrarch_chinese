@@ -305,6 +305,28 @@ def extract_phrases(sent_dict, sent_id):
 	return text_dict
 
 
+def get_event_time(event_text, dependency_list, base_time):
+	try:
+		import string
+		import sys
+		import re
+		sys.path.append("..")
+		from timeRecognition.TimeNormalizer import TimeNormalizer
+		tn = TimeNormalizer(isPreferFuture=True)
+		for phrase in dependency_list:
+			if string.find(phrase[0],event_text) != -1 or phrase[0] == '*':
+				target = phrase[1]
+				if re.match(r"([0-3][0-9]|[1-9])(日|号)", target) is not None:
+					target = "本月" + target
+				elif re.match(r"[0-1][0-9]|[1-9]月",target) is not None:
+					target = "今年" + target
+				res = tn.parse(target=target, timeBase=base_time)
+				return res["date"].split(" ")[0],target
+		return base_time.split(" ")[0],""
+	except:
+		return base_time.split(" ")[0],""
+
+
 def story_filter(story_dict, story_id):
 
 	"""
@@ -326,14 +348,24 @@ def story_filter(story_dict, story_id):
 
 	"""
 	filtered = defaultdict(dict)
-	story_date = story_dict['meta']['date']
+	story_date = story_dict['meta']['reportTime']
+	time_text = ""
 	for sent in sorted(story_dict['sents']):
 		sent_dict = story_dict['sents'][sent]
 		sent_id = '{}_{}'.format(story_id, sent)
+
 		if 'events' in sent_dict:
+
 			for event in story_dict['sents'][sent]['events']:
 				# do not print unresolved agents
+
 				try:
+					try:
+						event_text = story_dict['sents'][sent]['meta']['eventtext'][event]
+						dependence_list = story_dict['sents'][sent]['dependencyTimeList']
+						story_date,time_text = get_event_time(event_text,dependence_list,story_date)
+					except:
+						pass
 					alist = [story_date]
 					alist.extend(event)
 					event_tuple = tuple(alist)
@@ -391,8 +423,9 @@ def story_filter(story_dict, story_id):
 						filtered[event_tuple]['sentenceTime'] = sent_dict[
 							'meta']["sentenceTime"]
 					if 'timeText' in sent_dict['meta']:
-						filtered[event_tuple]['timeText'] = sent_dict[
-								'meta']["timeText"]
+						# filtered[event_tuple]['timeText'] = sent_dict[
+						# 		'meta']["timeText"]
+						filtered[event_tuple]['timeText'] = time_text
 					if "locationText" in sent_dict:
 						filtered[event_tuple]['locationText'] = sent_dict["locationText"]
 

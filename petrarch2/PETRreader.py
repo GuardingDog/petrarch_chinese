@@ -2149,6 +2149,15 @@ def read_xml_input(filepaths, parsed=False):
                 the format of this dictionary.
     """
     holding = {}
+    # TODO: time info should be extracted and written in XML
+    from timeRecognition.TimeNormalizer import TimeNormalizer
+    tn = TimeNormalizer(isPreferFuture=True)
+    import globalConfigPara as gcp
+    from stanfordcorenlp import StanfordCoreNLP
+    import string
+    if not gcp.corenlp_path == "":
+        corenlp_path = gcp.corenlp_path
+    nlp = StanfordCoreNLP(corenlp_path,lang='zh')
 
     for path in filepaths:
         tree = ET.iterparse(path)
@@ -2186,12 +2195,37 @@ def read_xml_input(filepaths, parsed=False):
                     locationText = story.find("locationText").text
                     locationText = locationText.replace("\n" , "")
 
+                    dependencyTimeList = []
+                    dependencyParse = nlp.dependency_parse(text.encode("utf-8"))
+                    token = nlp.word_tokenize(text.encode("utf-8"))
+                    for i, begin, end in dependencyParse:
+                        if i == "nmod:tmod":
+                            dependencyTimeList.append([token[begin - 1], token[end - 1]])
+                    timeRecognitionTimeList = []
+                    try:
+                        res = tn.parse(target=text.encode("utf-8"))
+                        timeRecognitionTimeList = res["key"].split(",")
+                        timeRecognitionTimeList = list(filter(None,timeRecognitionTimeList))
+                    except:
+                        pass
+                    # because time-phrase in dependencyList is incomplete, so replace it with time-phrase in timeRecognitionList
+                    if len(dependencyTimeList) > 0:
+                        for time_verb_phrase in dependencyTimeList:
+                            time_phrase  = time_verb_phrase[1]
+                            for time_recognition in timeRecognitionTimeList:
+                                if string.find(time_recognition, time_phrase) != -1:
+                                    time_verb_phrase[1] = time_recognition
+                                    break
+                    else:
+                        if len(timeRecognitionTimeList) > 0:
+                            dependencyTimeList.append(('*', timeRecognitionTimeList[0]))
                     # for loc in LOCATION:
                     #     if loc not in location:
                     #         LOCATION.remove(loc)
 
                     text = text.replace('\n', ' ').replace('  ', ' ')
-                    sent_dict = {'content': text, 'parsed': parsed_content , "locationText" :locationText }
+
+                    sent_dict = {'content': text, 'parsed': parsed_content , "locationText" :locationText, "dependencyTimeList":dependencyTimeList}
                     meta_content = {'date': story.attrib['date'],
                                     'source': story.attrib['source'],
                                     'ner': location,
@@ -2233,7 +2267,7 @@ def read_xml_input(filepaths, parsed=False):
                     holding[entry_id]['sents'][sent_id] = sent_dict
 
                 elem.clear()
-
+    nlp.close()
     return holding
 
 

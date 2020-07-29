@@ -92,8 +92,7 @@ if __name__ == "__main__":
     if not gcp.corenlp_path == "":
         corenlp_path = gcp.corenlp_path
 
-    for fileNum in range(6,7,1) :
-
+    for fileNum in range(0,1,1) :
         if not gcp.port == -1:  # 自选端口情况
             port = gcp.port
             kill_process(port)
@@ -126,16 +125,19 @@ if __name__ == "__main__":
                 fw.write('')
                 fw.close()
 
-        #flag = True
         if flag:
+            print "dealing with file_" + str(fileNum)
             converter = FromCorenlpConverter(input_path + format_text + '.txt', '', corenlp_path, port)
-
+            # converter = FromCorenlpConverter(r"input/7W/file_" + str(fileNum) + '.txt', r"output/7W/format_text_"+ str(fileNum) + ".xml", corenlp_path, port)
             converter.run()
 
             converter.__del__()
 
         args = Namespace(command_name='batch', config=None, inputs=xml_output_path + xml_file_name + '.xml',
-                         nullactors=False, nullverbs=False, outputs=output_path + output_filename )
+        #                  nullactors=False, nullverbs=False, outputs=output_path + output_filename )
+        # args = Namespace(command_name='batch', config=None, inputs=r"output/7W/format_text_"+ str(fileNum) + ".xml",
+        # args = Namespace(command_name='batch', config=None, inputs=r"output/format_text2.xml",
+                         nullactors=False, nullverbs=False, outputs=output_path + output_filename)
         # args = Namespace(command_name='batch', config=None, inputs='petrarch2/test-ch2.xml', nullactors=False, nullverbs=False, outputs=xml_output_path + 'test-ch2' + '_result.txt')
         petrarch2_main(args)
 

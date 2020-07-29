@@ -350,9 +350,9 @@ def get_event_str(events_dict,event_dict):
                         timeStamp = timeStamp + Text
             event_str += '\tsentenceTime\t{}\n'.format(timeStamp)
         if PETRglobals.WriteTimeText:
-            timeText = ""
-            for Text in event["timeText"]:
-                timeText = timeText + Text
+            timeText = "没有该项"
+            if "timeText" in event:
+                timeText = event["timeText"]
             event_str += '\ttimeText\t{}\n'.format(timeText)
         if PETRglobals.WriteNer:
             locationText = event["locationText"]
@@ -395,6 +395,7 @@ def write_events(event_dict, output_file, flag = True):
 
 
     event_output = []
+    event_str_time_extract = []
     # 测试用
     flag = False
     import globalConfigPara as gcp
@@ -408,6 +409,8 @@ def write_events(event_dict, output_file, flag = True):
 #        print('WE1',story_dict)
         story_output = [] # event_str in one story
         event_temp = [] # event_origin in one story
+        ## time extract test
+        event_temp_time_extract = []
 
         filtered_events = utilities.story_filter(story_dict, key)
 #        print('WE2',filtered_events)
@@ -420,6 +423,7 @@ def write_events(event_dict, output_file, flag = True):
             url = story_dict['meta']['url']
         else:
             url = ''
+        reportTime = story_dict["meta"]["reportTime"]
         StoryNer = ner_to_string(story_dict['meta']['ner'])
         # extract_location
         StoryNer2 = get_loction(story_dict)
@@ -531,12 +535,20 @@ def write_events(event_dict, output_file, flag = True):
                 temp_event_dict.update({"locationText": filtered_events[event]['locationText']})
 
             event_temp.append(temp_event_dict)
+            if temp_event_dict["origin"][0] != reportTime.split(" ")[0]:
+                event_temp_time_extract.append(temp_event_dict)
 
         event_str = get_event_str(event_temp,event_dict)
         if event_str is not None:
             event_output += event_str
         story_events = '\n'.join(story_output)
         event_output.append(story_events)
+
+        ## test extract time
+
+        event_str = get_event_str(event_temp_time_extract,event_dict)
+        if event_str is not None:
+            event_str_time_extract += event_str
 
     # Filter out blank lines
     event_output = [event for event in event_output if event]
@@ -553,55 +565,60 @@ def write_events(event_dict, output_file, flag = True):
             with open("evets.result_before_merge.txt", 'a') as f:
                 for strw in event_output:
                     f.write(strw + '\n')
-    if output_file:
-        if flag:
-            f = codecs.open(output_file, encoding='utf-8', mode='a')
-            for strq in event_output:
-                #             field = str.split('\t')  # debugging
-                #            f.write(field[5] + '\n')
-                f.write(strq + '\n')
-            f.close()
-        else:
-            story_list = []
-            for strp in event_output:
-                f_list = strp.splitlines();
-                for index in range(len(f_list)):
-                    if(index==2):
-                        story_list.append(f_list[index][5:11])
-            story_list2=list(set(story_list))
+            with open("evets.time_modified.txt", 'a') as f:
+                for strw in event_str_time_extract:
+                    f.write(strw + '\n')
+            # with open("event_time_modified.txt",'a') as f:
 
-            for i in range(len(story_list2)):
-                str_name=story_list2[i]+"evets.result_before_merge.txt"
-                with open(str_name, 'a') as f:
-                    TEXT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))  # 获取项目根目录
-                    path = os.path.join(TEXT_ROOT, "input\\test.txt")  # 文件路径
-                    with open(path, 'r') as file_to_read:
-                        while True:
-                            line = file_to_read.readline()
-                            if not line:
-                                break
-                            # if(line[0:6]==story_list2[i]):
-                            #     f.write(line)
-                            if (line.split("\t")[0] == story_list2[i]):
-                                f.write(line)
-                    event_num = 1
-                    for strss in event_output:
-                        listk = strss.splitlines()
-                        for index in range(len(listk)):
-                            temp = listk[2].split('\t')
-                            article_id = temp[len(temp) - 1].split('-')[0]
-                            if (article_id == story_list2[i]):
-                                if (index == 0):
-                                    f.write('\n')
-                                    ss = "#e" + str(event_num)
-                                    f.write(ss + '\n')
-                                    event_num = event_num + 1
-                                if (
-                                        index == 0 or index == 2 or index == 4 or index == 5 or index == 6 or index == 8 or index == 10):
-                                    f.write(listk[index] + '\n')
-
-
-                    f.close()
+    # if output_file:
+    #     if flag:
+    #         f = codecs.open(output_file, encoding='utf-8', mode='a')
+    #         for strq in event_output:
+    #             #             field = str.split('\t')  # debugging
+    #             #            f.write(field[5] + '\n')
+    #             f.write(strq + '\n')
+    #         f.close()
+    #     else:
+    #         story_list = []
+    #         for strp in event_output:
+    #             f_list = strp.splitlines();
+    #             for index in range(len(f_list)):
+    #                 if(index==2):
+    #                     story_list.append(f_list[index][5:11])
+    #         story_list2=list(set(story_list))
+    #
+    #         for i in range(len(story_list2)):
+    #             str_name=story_list2[i]+"evets.result_before_merge.txt"
+    #             with open(str_name, 'a') as f:
+    #                 TEXT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))  # 获取项目根目录
+    #                 path = os.path.join(TEXT_ROOT, "input\\test.txt")  # 文件路径
+    #                 with open(path, 'r') as file_to_read:
+    #                     while True:
+    #                         line = file_to_read.readline()
+    #                         if not line:
+    #                             break
+    #                         # if(line[0:6]==story_list2[i]):
+    #                         #     f.write(line)
+    #                         if (line.split("\t")[0] == story_list2[i]):
+    #                             f.write(line)
+    #                 event_num = 1
+    #                 for strss in event_output:
+    #                     listk = strss.splitlines()
+    #                     for index in range(len(listk)):
+    #                         temp = listk[2].split('\t')
+    #                         article_id = temp[len(temp) - 1].split('-')[0]
+    #                         if (article_id == story_list2[i]):
+    #                             if (index == 0):
+    #                                 f.write('\n')
+    #                                 ss = "#e" + str(event_num)
+    #                                 f.write(ss + '\n')
+    #                                 event_num = event_num + 1
+    #                             if (
+    #                                     index == 0 or index == 2 or index == 4 or index == 5 or index == 6 or index == 8 or index == 10):
+    #                                 f.write(listk[index] + '\n')
+    #
+    #
+    #                 f.close()
 
 def write_nullverbs(event_dict, output_file):
     """

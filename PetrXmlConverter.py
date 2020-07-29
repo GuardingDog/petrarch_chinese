@@ -58,7 +58,7 @@ class PetrXmlConverter:
     # paragraph preprocess
     #
     def format_text(self, content):
-        rule = u"(新华网|中新网|人民网|中新社|新华社|新华网|本报)[\u4e00-\u9fa50-9]{2,10}电"
+        rule = u"(新华网|中新网|人民网|中新社|新华社|中广网|环球网|本报)[\u4e00-\u9fa50-9]{2,10}电"
         pattern = re.compile(rule)
 
         match = pattern.search(content)
